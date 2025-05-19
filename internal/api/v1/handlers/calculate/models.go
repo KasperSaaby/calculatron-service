@@ -1,12 +1,12 @@
 package calculate
 
-type CalculateRequest struct {
+type Request struct {
 	OperationType string    `json:"operation_type"`
 	Operands      []float64 `json:"operands"`
 	Precision     int       `json:"precision"`
 }
 
-type CalculateResponse struct {
+type Response struct {
 	Result      float64 `json:"result"`
 	Precision   int     `json:"precision"`
 	OperationID string  `json:"operationId"`

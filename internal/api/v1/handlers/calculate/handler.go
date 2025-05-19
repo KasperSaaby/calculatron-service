@@ -23,7 +23,7 @@ func Handler(service *calculator.Service) func(w http.ResponseWriter, r *http.Re
 				return
 			}
 
-			var req CalculateRequest
+			var req Request
 			err = json.Unmarshal(buf.Bytes(), &req)
 			if err != nil {
 				logger.Errf(err, "Unmarshal request body")
@@ -45,7 +45,7 @@ func Handler(service *calculator.Service) func(w http.ResponseWriter, r *http.Re
 				return
 			}
 
-			resp := CalculateResponse{
+			resp := Response{
 				Result:      result.Result,
 				Precision:   result.Precision,
 				OperationID: result.OperationID,
