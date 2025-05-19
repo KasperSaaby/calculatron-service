@@ -1,0 +1,9 @@
+CREATE TABLE calculation_history (
+    operation_id VARCHAR PRIMARY KEY,
+    operation_type VARCHAR NOT NULL,
+    operands DOUBLE PRECISION[] NOT NULL,
+    result DOUBLE PRECISION NOT NULL,
+    precision INTEGER NOT NULL,
+    timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    metadata JSONB
+);

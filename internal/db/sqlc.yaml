@@ -3,8 +3,8 @@ version: "2"
 sql:
   - engine: "postgresql"
     schema: "migrations/*.sql"
-    queries: "queries/users.sql"
+    queries: "queries/calculation_history.sql"
     gen:
       go:
-        out: "../../generated/database/users"
+        out: "../../generated/database/calculation_history"
         omit_unused_structs: true

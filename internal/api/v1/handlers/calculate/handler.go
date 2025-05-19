@@ -31,7 +31,7 @@ func Handler(service *calculator.Service) func(w http.ResponseWriter, r *http.Re
 				return
 			}
 
-			result, err := service.PerformCalculation(values.OperationType(req.OperationType), req.Operands, req.Precision)
+			result, err := service.PerformCalculation(r.Context(), values.OperationType(req.OperationType), req.Operands, req.Precision)
 			if err != nil {
 				var clientErr *calculator.ClientError
 				if errors.As(err, &clientErr) {

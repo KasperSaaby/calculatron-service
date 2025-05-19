@@ -51,7 +51,7 @@ func Start() int {
 
 	mux := http.NewServeMux()
 
-	err = v1.Setup(mux)
+	err = v1.Setup(mux, conn)
 	if err != nil {
 		logger.Errf(err, "Setup handlers")
 		return FailedPrecondition

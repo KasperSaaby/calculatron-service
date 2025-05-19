@@ -1,8 +1,10 @@
 package calculator
 
 import (
+	"calculatron/internal/db/repos"
 	"calculatron/internal/domain/operations"
 	"calculatron/internal/domain/values"
+	"context"
 	"fmt"
 	"math"
 	"time"
@@ -10,13 +12,17 @@ import (
 	"github.com/google/uuid"
 )
 
-type Service struct{}
-
-func NewService() *Service {
-	return &Service{}
+type Service struct {
+	calculationHistoryRepo *repos.CalculationHistoryRepo
 }
 
-func (s *Service) PerformCalculation(operationType values.OperationType, operands []float64, precision int) (Result, error) {
+func NewService(calculationHistoryRepo *repos.CalculationHistoryRepo) *Service {
+	return &Service{
+		calculationHistoryRepo: calculationHistoryRepo,
+	}
+}
+
+func (s *Service) PerformCalculation(ctx context.Context, operationType values.OperationType, operands []float64, precision int) (Result, error) {
 	if len(operands) == 0 {
 		return Result{}, newClientError(fmt.Errorf("no operands provided"))
 	}
@@ -38,6 +44,11 @@ func (s *Service) PerformCalculation(operationType values.OperationType, operand
 	roundedResult, err := s.roundFloat(result, precision)
 	if err != nil {
 		return Result{}, fmt.Errorf("round result: %w", err)
+	}
+
+	err = s.calculationHistoryRepo.SaveCalculation(ctx, values.NewOperationID(), operationType, operands, roundedResult, precision)
+	if err != nil {
+		return Result{}, fmt.Errorf("save to calculation history: %w", err)
 	}
 
 	return Result{
