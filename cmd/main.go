@@ -15,15 +15,11 @@ func main() {
 }
 
 const (
-	// OK indicates Launcher exited with no issues
+	// OK indicates application exited with no issues
 	OK = 0
-	// Cancelled occurs when initial setup was interrupted by an exit signal
-	Cancelled = 1
-	// DeadlineExceeded occurs when closing/stopping components exceeds the deadline
-	DeadlineExceeded = 4
-	// FailedPrecondition happens if setup fails
+	// FailedPrecondition occurs if setup fails
 	FailedPrecondition = 9
-	// Internal occurs if an error is encountered while the Launcher is running
+	// Internal occurs if an error is encountered while the application is running
 	Internal = 13
 )
 
