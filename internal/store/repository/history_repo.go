@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"time"
 
 	db "github.com/KasperSaaby/calculatron-service/generated/database/history"
@@ -33,9 +34,12 @@ func (r *HistoryRepo) Create(ctx context.Context, entry values.HistoryEntry) err
 }
 
 func (r *HistoryRepo) FindAll(ctx context.Context, offset, limit int) ([]values.HistoryEntry, error) {
-	entities, err := r.querier.SelectAll(ctx)
+	entities, err := r.querier.SelectAll(ctx, db.SelectAllParams{
+		Limit:  int32(offset),
+		Offset: int32(limit),
+	})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("find history entries with offset %d and limit %d: %w", offset, limit, err)
 	}
 
 	var result []values.HistoryEntry

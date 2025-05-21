@@ -44,11 +44,16 @@ func (q *Queries) Insert(ctx context.Context, arg InsertParams) error {
 }
 
 const selectAll = `-- name: SelectAll :many
-SELECT operation_id, operation_type, operands, result, precision, timestamp, metadata FROM history
+SELECT operation_id, operation_type, operands, result, precision, timestamp, metadata FROM history LIMIT $1 OFFSET $2
 `
 
-func (q *Queries) SelectAll(ctx context.Context) ([]History, error) {
-	rows, err := q.db.QueryContext(ctx, selectAll)
+type SelectAllParams struct {
+	Limit  int32
+	Offset int32
+}
+
+func (q *Queries) SelectAll(ctx context.Context, arg SelectAllParams) ([]History, error) {
+	rows, err := q.db.QueryContext(ctx, selectAll, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
