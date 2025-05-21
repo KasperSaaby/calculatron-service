@@ -4,5 +4,5 @@ INSERT INTO history
 VALUES
     ($1, $2, $3,$4,$5,$6,$7);
 
--- name: QueryAll :many
+-- name: SelectAll :many
 SELECT * FROM history;

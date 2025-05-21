@@ -8,17 +8,17 @@ import (
 
 	"github.com/KasperSaaby/calculatron-service/internal/domain/operations"
 	"github.com/KasperSaaby/calculatron-service/internal/domain/values"
-	"github.com/KasperSaaby/calculatron-service/internal/store/database/repos"
+	"github.com/KasperSaaby/calculatron-service/internal/store"
 	"github.com/google/uuid"
 )
 
 type CalculatorService struct {
-	historyRepo *repos.HistoryRepo
+	historyStore store.HistoryStore
 }
 
-func NewCalculatorService(historyRepo *repos.HistoryRepo) *CalculatorService {
+func NewCalculatorService(historyStore store.HistoryStore) *CalculatorService {
 	return &CalculatorService{
-		historyRepo: historyRepo,
+		historyStore: historyStore,
 	}
 }
 
@@ -46,7 +46,14 @@ func (s *CalculatorService) PerformCalculation(ctx context.Context, operationTyp
 		return Result{}, fmt.Errorf("round result: %w", err)
 	}
 
-	err = s.historyRepo.SaveCalculation(ctx, values.NewOperationID(), operationType, operands, roundedResult, precision)
+	err = s.historyStore.SaveCalculation(ctx, values.HistoryEntry{
+		OperationID:   values.NewOperationID(),
+		OperationType: operationType,
+		Operands:      operands,
+		Result:        roundedResult,
+		Precision:     int32(precision),
+		Timestamp:     time.Now(),
+	})
 	if err != nil {
 		return Result{}, fmt.Errorf("save to calculation history: %w", err)
 	}

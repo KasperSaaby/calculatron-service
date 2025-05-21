@@ -43,12 +43,12 @@ func (q *Queries) Insert(ctx context.Context, arg InsertParams) error {
 	return err
 }
 
-const queryAll = `-- name: QueryAll :many
+const selectAll = `-- name: SelectAll :many
 SELECT operation_id, operation_type, operands, result, precision, timestamp, metadata FROM history
 `
 
-func (q *Queries) QueryAll(ctx context.Context) ([]History, error) {
-	rows, err := q.db.QueryContext(ctx, queryAll)
+func (q *Queries) SelectAll(ctx context.Context) ([]History, error) {
+	rows, err := q.db.QueryContext(ctx, selectAll)
 	if err != nil {
 		return nil, err
 	}
