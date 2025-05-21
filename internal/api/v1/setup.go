@@ -14,9 +14,9 @@ import (
 )
 
 func Setup(mux *http.ServeMux, db *sql.DB) error {
-	storeType := os.Getenv("STORE_TYPE")
+	storeType := os.Getenv("HISTORY_STORE_TYPE")
 	if storeType == "" {
-		return errors.New("STORE_TYPE must be set")
+		return errors.New("HISTORY_STORE_TYPE must be set")
 	}
 
 	storeFactory, err := store.GetStoreFactory(store.Type(storeType), db)
