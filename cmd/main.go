@@ -8,8 +8,8 @@ import (
 	"syscall"
 
 	v1 "github.com/KasperSaaby/calculatron-service/internal/api/v1"
-	"github.com/KasperSaaby/calculatron-service/internal/db"
 	"github.com/KasperSaaby/calculatron-service/internal/platform/logger"
+	db "github.com/KasperSaaby/calculatron-service/internal/store/database"
 )
 
 func main() {

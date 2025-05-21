@@ -6,5 +6,5 @@ sql:
     queries: "queries/calculation_history.sql"
     gen:
       go:
-        out: "../../generated/database/calculation_history"
+        out: "../../../generated/database/calculation_history"
         omit_unused_structs: true

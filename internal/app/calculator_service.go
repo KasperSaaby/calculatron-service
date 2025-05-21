@@ -6,9 +6,9 @@ import (
 	"math"
 	"time"
 
-	"github.com/KasperSaaby/calculatron-service/internal/db/repos"
 	"github.com/KasperSaaby/calculatron-service/internal/domain/operations"
 	"github.com/KasperSaaby/calculatron-service/internal/domain/values"
+	"github.com/KasperSaaby/calculatron-service/internal/store/database/repos"
 	"github.com/google/uuid"
 )
 

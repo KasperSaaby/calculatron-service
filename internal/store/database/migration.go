@@ -1,9 +1,10 @@
-package db
+package database
 
 import (
 	"database/sql"
 	"embed"
 	"errors"
+	"os"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
@@ -26,7 +27,12 @@ func MigrateSchemas(conn *sql.DB) error {
 		return err
 	}
 
-	m, err := migrate.NewWithInstance("iofs", sourceDriver, "postgres", dbInstance)
+	dbName := os.Getenv("DBNAME")
+	if dbName == "" {
+		return errors.New("DBNAME environment variable not set")
+	}
+
+	m, err := migrate.NewWithInstance("iofs", sourceDriver, dbName, dbInstance)
 	if err != nil {
 		return err
 	}

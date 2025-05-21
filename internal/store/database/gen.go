@@ -1,4 +1,4 @@
-package db
+package database
 
 import _ "github.com/sqlc-dev/sqlc"
 
