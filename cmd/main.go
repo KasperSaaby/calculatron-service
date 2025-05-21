@@ -4,6 +4,7 @@ import (
 	v1 "calculatron/internal/api/v1"
 	"calculatron/internal/db"
 	"calculatron/pkg/logger"
+	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
@@ -42,6 +43,12 @@ func Start() int {
 		return FailedPrecondition
 	}
 
+	port := os.Getenv("PORT")
+	if port == "" {
+		logger.Errf(err, "No PORT environment variable defined")
+		return FailedPrecondition
+	}
+
 	mux := http.NewServeMux()
 
 	err = v1.Setup(mux, conn)
@@ -51,9 +58,11 @@ func Start() int {
 	}
 
 	go func() {
-		err := http.ListenAndServe(":8080", mux)
+		logger.Infof("Application listening on port %s", port)
+
+		err := http.ListenAndServe(fmt.Sprintf(":%s", port), mux)
 		if err != nil {
-			logger.Errf(err, "Listening on port 8080")
+			logger.Errf(err, "Listening on port %s", port)
 		}
 	}()
 
@@ -61,8 +70,7 @@ func Start() int {
 
 	exitCode = <-exitChan
 
-	logger.Infof("Received exit code: %d", exitCode)
-	logger.Infof("Stopping application")
+	logger.Infof("Stopping application with exit code: %d", exitCode)
 
 	err = conn.Close()
 	if err != nil {

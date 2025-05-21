@@ -32,5 +32,4 @@ docker exec -ti go-postgres-demo psql -U postgres
 docker exec -ti pg createdb -U lunar calculatron-db
 docker exec -ti pg psql -U postgres
 
-
 https://cloud.google.com/sql/docs/postgres/connect-run#public-ip-default
