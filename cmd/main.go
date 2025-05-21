@@ -15,12 +15,9 @@ func main() {
 }
 
 const (
-	// OK indicates application exited with no issues
-	OK = 0
-	// FailedPrecondition occurs if setup fails
+	OK                 = 0
 	FailedPrecondition = 9
-	// Internal occurs if an error is encountered while the application is running
-	Internal = 13
+	Internal           = 13
 )
 
 func Start() int {
@@ -54,9 +51,9 @@ func Start() int {
 	}
 
 	go func() {
-		err := http.ListenAndServe(":80", mux)
+		err := http.ListenAndServe(":8080", mux)
 		if err != nil {
-			logger.Errf(err, "Listening on port 80")
+			logger.Errf(err, "Listening on port 8080")
 		}
 	}()
 
