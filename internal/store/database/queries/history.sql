@@ -4,5 +4,8 @@ INSERT INTO history
 VALUES
     ($1, $2, $3,$4,$5,$6,$7);
 
--- name: SelectAll :many
+-- name: FindAll :many
 SELECT * FROM history LIMIT $1 OFFSET $2;
+
+-- name: FindByID :one
+SELECT * FROM history WHERE operation_id = $1;

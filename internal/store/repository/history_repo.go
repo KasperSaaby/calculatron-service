@@ -34,7 +34,7 @@ func (r *HistoryRepo) Create(ctx context.Context, entry values.HistoryEntry) err
 }
 
 func (r *HistoryRepo) FindAll(ctx context.Context, offset, limit int) ([]values.HistoryEntry, error) {
-	entities, err := r.querier.SelectAll(ctx, db.SelectAllParams{
+	entities, err := r.querier.FindAll(ctx, db.FindAllParams{
 		Limit:  int32(offset),
 		Offset: int32(limit),
 	})
@@ -48,6 +48,15 @@ func (r *HistoryRepo) FindAll(ctx context.Context, offset, limit int) ([]values.
 	}
 
 	return result, nil
+}
+
+func (r *HistoryRepo) FindByID(ctx context.Context, operationID values.OperationID) (values.HistoryEntry, error) {
+	entity, err := r.querier.FindByID(ctx, operationID.String())
+	if err != nil {
+		return values.HistoryEntry{}, fmt.Errorf("find history entry by id %s: %w", operationID, err)
+	}
+
+	return r.mapToDomain(entity), nil
 }
 
 func (*HistoryRepo) mapToDomain(history db.History) values.HistoryEntry {

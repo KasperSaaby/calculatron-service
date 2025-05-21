@@ -26,5 +26,5 @@ func (s *DatabaseHistoryStore) GetAllCalculations(ctx context.Context, offset, l
 }
 
 func (s *DatabaseHistoryStore) GetCalculationByID(ctx context.Context, operationID values.OperationID) (values.HistoryEntry, error) {
-	return values.HistoryEntry{}, nil
+	return s.repo.FindByID(ctx, operationID)
 }

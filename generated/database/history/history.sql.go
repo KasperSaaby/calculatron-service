@@ -13,6 +13,65 @@ import (
 	"github.com/sqlc-dev/pqtype"
 )
 
+const findAll = `-- name: FindAll :many
+SELECT operation_id, operation_type, operands, result, precision, timestamp, metadata FROM history LIMIT $1 OFFSET $2
+`
+
+type FindAllParams struct {
+	Limit  int32
+	Offset int32
+}
+
+func (q *Queries) FindAll(ctx context.Context, arg FindAllParams) ([]History, error) {
+	rows, err := q.db.QueryContext(ctx, findAll, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []History
+	for rows.Next() {
+		var i History
+		if err := rows.Scan(
+			&i.OperationID,
+			&i.OperationType,
+			pq.Array(&i.Operands),
+			&i.Result,
+			&i.Precision,
+			&i.Timestamp,
+			&i.Metadata,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const findByID = `-- name: FindByID :one
+SELECT operation_id, operation_type, operands, result, precision, timestamp, metadata FROM history WHERE operation_id = $1
+`
+
+func (q *Queries) FindByID(ctx context.Context, operationID string) (History, error) {
+	row := q.db.QueryRowContext(ctx, findByID, operationID)
+	var i History
+	err := row.Scan(
+		&i.OperationID,
+		&i.OperationType,
+		pq.Array(&i.Operands),
+		&i.Result,
+		&i.Precision,
+		&i.Timestamp,
+		&i.Metadata,
+	)
+	return i, err
+}
+
 const insert = `-- name: Insert :exec
 INSERT INTO history
     (operation_id, operation_type, operands, result, precision, timestamp, metadata)
@@ -41,44 +100,4 @@ func (q *Queries) Insert(ctx context.Context, arg InsertParams) error {
 		arg.Metadata,
 	)
 	return err
-}
-
-const selectAll = `-- name: SelectAll :many
-SELECT operation_id, operation_type, operands, result, precision, timestamp, metadata FROM history LIMIT $1 OFFSET $2
-`
-
-type SelectAllParams struct {
-	Limit  int32
-	Offset int32
-}
-
-func (q *Queries) SelectAll(ctx context.Context, arg SelectAllParams) ([]History, error) {
-	rows, err := q.db.QueryContext(ctx, selectAll, arg.Limit, arg.Offset)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []History
-	for rows.Next() {
-		var i History
-		if err := rows.Scan(
-			&i.OperationID,
-			&i.OperationType,
-			pq.Array(&i.Operands),
-			&i.Result,
-			&i.Precision,
-			&i.Timestamp,
-			&i.Metadata,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
 }
