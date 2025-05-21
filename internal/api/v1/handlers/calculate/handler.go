@@ -2,13 +2,14 @@ package calculate
 
 import (
 	"bytes"
-	"calculatron/internal/app/calculator"
-	"calculatron/internal/domain/values"
-	"calculatron/pkg/logger"
 	"encoding/json"
 	"errors"
 	"net/http"
 	"time"
+
+	"github.com/KasperSaaby/calculatron-service/internal/app/calculator"
+	"github.com/KasperSaaby/calculatron-service/internal/domain/values"
+	"github.com/KasperSaaby/calculatron-service/internal/platform/logger"
 )
 
 func Handler(service *calculator.Service) func(w http.ResponseWriter, r *http.Request) {

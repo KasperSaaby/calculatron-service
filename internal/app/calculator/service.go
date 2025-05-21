@@ -1,14 +1,14 @@
 package calculator
 
 import (
-	"calculatron/internal/db/repos"
-	"calculatron/internal/domain/operations"
-	"calculatron/internal/domain/values"
 	"context"
 	"fmt"
 	"math"
 	"time"
 
+	"github.com/KasperSaaby/calculatron-service/internal/db/repos"
+	"github.com/KasperSaaby/calculatron-service/internal/domain/operations"
+	"github.com/KasperSaaby/calculatron-service/internal/domain/values"
 	"github.com/google/uuid"
 )
 

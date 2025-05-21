@@ -1,12 +1,12 @@
 package repos
 
 import (
-	"calculatron/generated/database/calculation_history"
-	"calculatron/internal/domain/values"
 	"context"
 	"database/sql"
 	"time"
 
+	"github.com/KasperSaaby/calculatron-service/generated/database/calculation_history"
+	"github.com/KasperSaaby/calculatron-service/internal/domain/values"
 	"github.com/sqlc-dev/pqtype"
 )
 

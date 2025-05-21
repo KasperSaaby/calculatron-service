@@ -1,4 +1,4 @@
-module calculatron
+module github.com/KasperSaaby/calculatron-service
 
 go 1.24
 

@@ -1,6 +1,6 @@
 package operations
 
-import "calculatron/internal/domain/values"
+import "github.com/KasperSaaby/calculatron-service/internal/domain/values"
 
 type operationFunc func(...float64) (float64, error)
 

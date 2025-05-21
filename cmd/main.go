@@ -1,14 +1,15 @@
 package main
 
 import (
-	v1 "calculatron/internal/api/v1"
-	"calculatron/internal/db"
-	"calculatron/pkg/logger"
 	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
+
+	v1 "github.com/KasperSaaby/calculatron-service/internal/api/v1"
+	"github.com/KasperSaaby/calculatron-service/internal/db"
+	"github.com/KasperSaaby/calculatron-service/internal/platform/logger"
 )
 
 func main() {
