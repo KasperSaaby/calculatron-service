@@ -7,12 +7,12 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/KasperSaaby/calculatron-service/internal/app/calculator"
+	"github.com/KasperSaaby/calculatron-service/internal/app"
 	"github.com/KasperSaaby/calculatron-service/internal/domain/values"
 	"github.com/KasperSaaby/calculatron-service/internal/platform/logger"
 )
 
-func Handler(service *calculator.CalculatorService) func(w http.ResponseWriter, r *http.Request) {
+func Handler(service *app.CalculatorService) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodPost:
@@ -32,11 +32,16 @@ func Handler(service *calculator.CalculatorService) func(w http.ResponseWriter, 
 				return
 			}
 
-			result, err := service.PerformCalculation(r.Context(), values.OperationType(req.OperationType), req.Operands, req.Precision)
+			result, err := service.PerformCalculation(
+				r.Context(),
+				values.OperationType(req.OperationType),
+				req.Operands,
+				req.Precision,
+			)
 			if err != nil {
-				var clientErr *calculator.ClientError
-				if errors.As(err, &clientErr) {
-					logger.Infof("Client error: %v", clientErr)
+				var appError *app.AppError
+				if errors.As(err, &appError) {
+					logger.Infof("App error: %v", appError)
 					w.WriteHeader(http.StatusBadRequest)
 					return
 				}

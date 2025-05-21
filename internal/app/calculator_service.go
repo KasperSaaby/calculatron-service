@@ -1,4 +1,4 @@
-package calculator
+package app
 
 import (
 	"context"
@@ -24,16 +24,16 @@ func NewCalculatorService(calculationHistoryRepo *repos.CalculationHistoryRepo) 
 
 func (s *CalculatorService) PerformCalculation(ctx context.Context, operationType values.OperationType, operands []float64, precision int) (Result, error) {
 	if len(operands) == 0 {
-		return Result{}, newClientError(fmt.Errorf("no operands provided"))
+		return Result{}, newAppError("no operands provided")
 	}
 
 	if precision < 0 {
-		return Result{}, newClientError(fmt.Errorf("precision cannot be negative"))
+		return Result{}, newAppError("precision cannot be negative")
 	}
 
 	op, exist := operations.Catalogue[operationType]
 	if !exist {
-		return Result{}, newClientError(fmt.Errorf("operation %q is not supported", operationType))
+		return Result{}, newAppError("operation %q is not supported", operationType)
 	}
 
 	result, err := op(operands...)

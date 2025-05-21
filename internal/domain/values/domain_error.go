@@ -1,5 +1,7 @@
 package values
 
+import "fmt"
+
 type Code string
 
 const (
@@ -21,5 +23,5 @@ func NewDomainError(message string, code Code) *DomainError {
 }
 
 func (e *DomainError) Error() string {
-	return e.Message
+	return fmt.Sprintf("(%s) %s", e.Code, e.Message)
 }
