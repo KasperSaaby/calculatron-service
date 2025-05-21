@@ -9,7 +9,7 @@ func Handler() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
-			_, err := io.WriteString(w, "pong\n")
+			_, err := io.WriteString(w, "pong")
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				return
