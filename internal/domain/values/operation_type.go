@@ -3,7 +3,7 @@ package values
 type OperationType string
 
 const (
-	OperationType_Add      OperationType = "add"
+	OperationType_Addition OperationType = "addition"
 	OperationType_Subtract OperationType = "subtract"
 	OperationType_Multiply OperationType = "multiply"
 	OperationType_Divide   OperationType = "divide"
