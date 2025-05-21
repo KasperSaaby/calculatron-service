@@ -1,0 +1,50 @@
+{
+	"info": {
+		"_postman_id": "9915aa19-6b16-45c1-8566-8bebe87cd57a",
+		"name": "Calculatron",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "5260231"
+	},
+	"item": [
+		{
+			"name": "v1",
+			"item": [
+				{
+					"name": "calculate",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"operation_type\": \"add\",\n    \"operands\": [\n        5.5,\n        7.24\n    ],\n    \"precision\": 1,\n    \"async\": false,\n    \"metadata\": {\n        \"requestId\": \"0a7a3fd9-f174-4140-ade0-5e6b498ae7f5\",\n        \"source\": \"web\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{path}}/{{version}}/calculate",
+							"host": [
+								"{{path}}"
+							],
+							"path": [
+								"{{version}}",
+								"calculate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ping",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
