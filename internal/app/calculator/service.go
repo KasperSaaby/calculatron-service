@@ -12,17 +12,17 @@ import (
 	"github.com/google/uuid"
 )
 
-type Service struct {
+type CalculatorService struct {
 	calculationHistoryRepo *repos.CalculationHistoryRepo
 }
 
-func NewService(calculationHistoryRepo *repos.CalculationHistoryRepo) *Service {
-	return &Service{
+func NewCalculatorService(calculationHistoryRepo *repos.CalculationHistoryRepo) *CalculatorService {
+	return &CalculatorService{
 		calculationHistoryRepo: calculationHistoryRepo,
 	}
 }
 
-func (s *Service) PerformCalculation(ctx context.Context, operationType values.OperationType, operands []float64, precision int) (Result, error) {
+func (s *CalculatorService) PerformCalculation(ctx context.Context, operationType values.OperationType, operands []float64, precision int) (Result, error) {
 	if len(operands) == 0 {
 		return Result{}, newClientError(fmt.Errorf("no operands provided"))
 	}
@@ -59,7 +59,7 @@ func (s *Service) PerformCalculation(ctx context.Context, operationType values.O
 	}, nil
 }
 
-func (s *Service) roundFloat(val float64, precision int) (float64, error) {
+func (s *CalculatorService) roundFloat(val float64, precision int) (float64, error) {
 	multiplier := math.Pow(10, float64(precision))
 	rounded := math.Round(val*multiplier) / multiplier
 	return rounded, nil

@@ -12,7 +12,7 @@ import (
 	"github.com/KasperSaaby/calculatron-service/internal/platform/logger"
 )
 
-func Handler(service *calculator.Service) func(w http.ResponseWriter, r *http.Request) {
+func Handler(service *calculator.CalculatorService) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodPost:

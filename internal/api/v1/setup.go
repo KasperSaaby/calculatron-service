@@ -13,7 +13,7 @@ import (
 func Setup(mux *http.ServeMux, db *sql.DB) error {
 	var (
 		calculationHistoryRepo = repos.NewCalculationHistoryRepo(db)
-		service                = calculator.NewService(calculationHistoryRepo)
+		service                = calculator.NewCalculatorService(calculationHistoryRepo)
 	)
 
 	mux.HandleFunc("/v1/ping", ping.Handler())
