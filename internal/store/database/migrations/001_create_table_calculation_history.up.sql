@@ -1,4 +1,4 @@
-CREATE TABLE calculation_history (
+CREATE TABLE IF NOT EXISTS calculation_history (
     operation_id VARCHAR PRIMARY KEY,
     operation_type VARCHAR NOT NULL,
     operands DOUBLE PRECISION[] NOT NULL,

@@ -13,12 +13,12 @@ import (
 )
 
 type CalculatorService struct {
-	calculationHistoryRepo *repos.CalculationHistoryRepo
+	historyRepo *repos.HistoryRepo
 }
 
-func NewCalculatorService(calculationHistoryRepo *repos.CalculationHistoryRepo) *CalculatorService {
+func NewCalculatorService(historyRepo *repos.HistoryRepo) *CalculatorService {
 	return &CalculatorService{
-		calculationHistoryRepo: calculationHistoryRepo,
+		historyRepo: historyRepo,
 	}
 }
 
@@ -46,7 +46,7 @@ func (s *CalculatorService) PerformCalculation(ctx context.Context, operationTyp
 		return Result{}, fmt.Errorf("round result: %w", err)
 	}
 
-	err = s.calculationHistoryRepo.SaveCalculation(ctx, values.NewOperationID(), operationType, operands, roundedResult, precision)
+	err = s.historyRepo.SaveCalculation(ctx, values.NewOperationID(), operationType, operands, roundedResult, precision)
 	if err != nil {
 		return Result{}, fmt.Errorf("save to calculation history: %w", err)
 	}

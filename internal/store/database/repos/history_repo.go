@@ -5,22 +5,22 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/KasperSaaby/calculatron-service/generated/database/calculation_history"
+	db "github.com/KasperSaaby/calculatron-service/generated/database/history"
 	"github.com/KasperSaaby/calculatron-service/internal/domain/values"
 	"github.com/sqlc-dev/pqtype"
 )
 
-type CalculationHistoryRepo struct {
-	querier *calculation_history.Queries
+type HistoryRepo struct {
+	querier *db.Queries
 }
 
-func NewCalculationHistoryRepo(conn *sql.DB) *CalculationHistoryRepo {
-	return &CalculationHistoryRepo{
-		querier: calculation_history.New(conn),
+func NewHistoryRepo(conn *sql.DB) *HistoryRepo {
+	return &HistoryRepo{
+		querier: db.New(conn),
 	}
 }
 
-func (r *CalculationHistoryRepo) SaveCalculation(
+func (r *HistoryRepo) SaveCalculation(
 	ctx context.Context,
 	operationID values.OperationID,
 	operationType values.OperationType,
@@ -28,7 +28,7 @@ func (r *CalculationHistoryRepo) SaveCalculation(
 	result float64,
 	precision int,
 ) error {
-	return r.querier.Insert(ctx, calculation_history.InsertParams{
+	return r.querier.Insert(ctx, db.InsertParams{
 		OperationID:   operationID.String(),
 		OperationType: operationType.String(),
 		Operands:      operands,

@@ -2,7 +2,7 @@
 // versions:
 //   sqlc v1.29.0
 
-package calculation_history
+package history
 
 import (
 	"time"
@@ -10,7 +10,7 @@ import (
 	"github.com/sqlc-dev/pqtype"
 )
 
-type CalculationHistory struct {
+type History struct {
 	OperationID   string
 	OperationType string
 	Operands      []float64
