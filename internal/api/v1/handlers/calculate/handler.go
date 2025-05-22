@@ -27,6 +27,7 @@ func PostCalculateHandler(service *app.CalculatorService) operations.PostCalcula
 				return operations.NewPostCalculatorBadRequest()
 			}
 
+			logger.Errf(err, "Perform calculation")
 			return operations.NewPostCalculatorInternalServerError()
 		}
 
