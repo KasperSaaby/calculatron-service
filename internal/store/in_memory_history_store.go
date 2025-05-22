@@ -40,9 +40,26 @@ func (s *InMemoryHistoryStore) GetAllCalculations(_ context.Context, offset, lim
 	s.mux.RLock()
 	defer s.mux.RUnlock()
 
-	// TODO : add validation of offset and limit and ensure slice length is not exceeded
+	if offset < 0 {
+		offset = 0
+	}
+
+	if limit <= 0 {
+		return []values.HistoryEntry{}, nil
+	}
+
+	totalEntries := len(s.order)
+	if offset >= totalEntries {
+		return []values.HistoryEntry{}, nil
+	}
+
+	endIndex := offset + limit
+	if endIndex > totalEntries {
+		endIndex = totalEntries
+	}
+
 	var entries []values.HistoryEntry
-	for _, id := range s.order[offset:limit] {
+	for _, id := range s.order[offset:endIndex] {
 		entries = append(entries, s.entries[id])
 	}
 
