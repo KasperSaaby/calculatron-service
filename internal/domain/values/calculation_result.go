@@ -1,10 +1,10 @@
-package app
+package values
 
 import "time"
 
-type Result struct {
+type CalculationResult struct {
 	Result      float64
 	Precision   int
-	OperationID string
+	OperationID OperationID
 	Timestamp   time.Time
 }

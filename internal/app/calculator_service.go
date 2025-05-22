@@ -9,7 +9,6 @@ import (
 	"github.com/KasperSaaby/calculatron-service/internal/domain/operations"
 	"github.com/KasperSaaby/calculatron-service/internal/domain/values"
 	"github.com/KasperSaaby/calculatron-service/internal/store"
-	"github.com/google/uuid"
 )
 
 type CalculatorService struct {
@@ -22,32 +21,33 @@ func NewCalculatorService(historyStore store.HistoryStore) *CalculatorService {
 	}
 }
 
-func (s *CalculatorService) PerformCalculation(ctx context.Context, operationType values.OperationType, operands []float64, precision int) (Result, error) {
+func (s *CalculatorService) PerformCalculation(ctx context.Context, operationType values.OperationType, operands []float64, precision int) (values.CalculationResult, error) {
 	if len(operands) == 0 {
-		return Result{}, newAppError("no operands provided")
+		return values.CalculationResult{}, newAppError("no operands provided")
 	}
 
 	if precision < 0 {
-		return Result{}, newAppError("precision cannot be negative")
+		return values.CalculationResult{}, newAppError("precision cannot be negative")
 	}
 
 	op, exist := operations.Catalogue[operationType]
 	if !exist {
-		return Result{}, newAppError("operation %q is not supported", operationType)
+		return values.CalculationResult{}, newAppError("operation %q is not supported", operationType)
 	}
 
 	result, err := op(operands...)
 	if err != nil {
-		return Result{}, fmt.Errorf("execute %q operation: %w", operationType, err)
+		return values.CalculationResult{}, fmt.Errorf("execute %q operation: %w", operationType, err)
 	}
 
 	roundedResult, err := s.roundFloat(result, precision)
 	if err != nil {
-		return Result{}, fmt.Errorf("round result: %w", err)
+		return values.CalculationResult{}, fmt.Errorf("round result: %w", err)
 	}
 
+	operationID := values.NewOperationID()
 	err = s.historyStore.SaveCalculation(ctx, values.HistoryEntry{
-		OperationID:   values.NewOperationID(),
+		OperationID:   operationID,
 		OperationType: operationType,
 		Operands:      operands,
 		Result:        roundedResult,
@@ -55,13 +55,13 @@ func (s *CalculatorService) PerformCalculation(ctx context.Context, operationTyp
 		Timestamp:     time.Now(),
 	})
 	if err != nil {
-		return Result{}, fmt.Errorf("save to calculation history: %w", err)
+		return values.CalculationResult{}, fmt.Errorf("save to calculation history: %w", err)
 	}
 
-	return Result{
+	return values.CalculationResult{
 		Result:      roundedResult,
 		Precision:   precision,
-		OperationID: uuid.NewString(),
+		OperationID: operationID,
 		Timestamp:   time.Now(),
 	}, nil
 }

@@ -54,7 +54,7 @@ func Handler(service *app.CalculatorService) func(w http.ResponseWriter, r *http
 			resp := PostCalculateResponse{
 				Result:      result.Result,
 				Precision:   result.Precision,
-				OperationID: result.OperationID,
+				OperationID: result.OperationID.String(),
 				Timestamp:   result.Timestamp.Format(time.RFC3339),
 			}
 
