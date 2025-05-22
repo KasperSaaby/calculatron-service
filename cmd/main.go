@@ -1,92 +1,71 @@
 package main
 
 import (
+	"context"
+	"database/sql"
 	"fmt"
 	"net/http"
 	"os"
-	"os/signal"
-	"syscall"
 
 	v1 "github.com/KasperSaaby/calculatron-service/internal/api/v1"
 	"github.com/KasperSaaby/calculatron-service/internal/platform/logger"
-	db "github.com/KasperSaaby/calculatron-service/internal/store/database"
+	"github.com/KasperSaaby/calculatron-service/internal/store/database"
+	"go.uber.org/fx"
 )
 
 func main() {
-	os.Exit(Start())
+	fx.New(Opts()).Run()
 }
 
-const (
-	OK                 = 0
-	FailedPrecondition = 9
-	Internal           = 13
-)
+func Opts() fx.Option {
+	return fx.Options(
+		fx.Provide(
+			NewDatabase,
+			NewHTTPServer,
+		),
+		fx.Invoke(
+			database.MigrateSchemas,
+			v1.Setup,
+		),
+	)
+}
 
-func Start() int {
-	logger.Infof("Starting application")
-
-	exitCode := OK
-	exitChan := make(chan int, 1)
-
-	go func() {
-		exitChan <- lifetime()
-	}()
-
-	conn, err := db.New()
+func NewDatabase(lc fx.Lifecycle) (*sql.DB, error) {
+	db, err := database.New()
 	if err != nil {
-		logger.Errf(err, "Connect to database")
-		return FailedPrecondition
+		return nil, err
 	}
 
-	err = db.MigrateSchemas(conn)
-	if err != nil {
-		logger.Errf(err, "Migrate database schemas")
-		return FailedPrecondition
-	}
+	lc.Append(fx.Hook{
+		OnStop: func(ctx context.Context) error {
+			return db.Close()
+		},
+	})
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		logger.Errf(err, "No PORT environment variable defined")
-		return FailedPrecondition
-	}
+	return db, nil
+}
 
+func NewHTTPServer(lc fx.Lifecycle) *http.ServeMux {
 	mux := http.NewServeMux()
 
-	err = v1.Setup(mux, conn)
-	if err != nil {
-		logger.Errf(err, "Setup handlers")
-		return FailedPrecondition
-	}
+	lc.Append(fx.Hook{
+		OnStart: func(_ context.Context) error {
+			port := os.Getenv("PORT")
+			if port == "" {
+				return fmt.Errorf("no PORT environment variable defined")
+			}
 
-	go func() {
-		logger.Infof("Application listening on port %s", port)
+			go func() {
+				logger.Infof("Application listening on port %s", port)
+				err := http.ListenAndServe(fmt.Sprintf(":%s", port), mux)
+				if err != nil {
+					logger.Errf(err, "Listening on port %s", port)
+				}
+			}()
 
-		err := http.ListenAndServe(fmt.Sprintf(":%s", port), mux)
-		if err != nil {
-			logger.Errf(err, "Listening on port %s", port)
-		}
-	}()
+			return nil
+		},
+	})
 
-	logger.Infof("Application started")
-
-	exitCode = <-exitChan
-
-	logger.Infof("Stopping application with exit code: %d", exitCode)
-
-	err = conn.Close()
-	if err != nil {
-		logger.Errf(err, "Close database")
-	}
-
-	return exitCode
-}
-
-func lifetime() int {
-	signals := make(chan os.Signal, 1)
-	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
-	<-signals
-
-	logger.Infof("Received interrupt signal")
-
-	return OK
+	return mux
 }

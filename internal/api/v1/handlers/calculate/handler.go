@@ -1,9 +1,9 @@
 package calculate
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 	"time"
 
@@ -16,8 +16,7 @@ func Handler(service *app.CalculatorService) func(w http.ResponseWriter, r *http
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodPost:
-			buf := new(bytes.Buffer)
-			_, err := buf.ReadFrom(r.Body)
+			b, err := io.ReadAll(r.Body)
 			if err != nil {
 				logger.Errf(err, "Read request body")
 				w.WriteHeader(http.StatusInternalServerError)
@@ -25,7 +24,7 @@ func Handler(service *app.CalculatorService) func(w http.ResponseWriter, r *http
 			}
 
 			var req PostCalculateRequest
-			err = json.Unmarshal(buf.Bytes(), &req)
+			err = json.Unmarshal(b, &req)
 			if err != nil {
 				logger.Errf(err, "Unmarshal request body")
 				w.WriteHeader(http.StatusInternalServerError)
@@ -58,7 +57,7 @@ func Handler(service *app.CalculatorService) func(w http.ResponseWriter, r *http
 				Timestamp:   result.Timestamp.Format(time.RFC3339),
 			}
 
-			b, err := json.Marshal(resp)
+			b, err = json.Marshal(resp)
 			if err != nil {
 				logger.Errf(err, "Marshal response")
 				w.WriteHeader(http.StatusInternalServerError)
