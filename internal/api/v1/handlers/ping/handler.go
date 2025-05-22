@@ -1,24 +1,12 @@
 package ping
 
 import (
-	"io"
-	"net/http"
+	"github.com/KasperSaaby/calculatron-service/generated/restapi/operations"
+	"github.com/go-openapi/runtime/middleware"
 )
 
-func Handler() func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case http.MethodGet:
-			_, err := io.WriteString(w, "pong")
-			if err != nil {
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
-
-			return
-		default:
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			return
-		}
-	}
+func GetPingHandler() operations.GetPingHandler {
+	return operations.GetPingHandlerFunc(func(params operations.GetPingParams) middleware.Responder {
+		return operations.NewGetPingOK().WithPayload("pong")
+	})
 }

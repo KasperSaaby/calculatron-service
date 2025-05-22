@@ -4,12 +4,16 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"net/http"
 	"os"
+	"strconv"
 
+	"github.com/KasperSaaby/calculatron-service/generated/restapi"
+	"github.com/KasperSaaby/calculatron-service/generated/restapi/operations"
 	v1 "github.com/KasperSaaby/calculatron-service/internal/api/v1"
 	"github.com/KasperSaaby/calculatron-service/internal/platform/logger"
 	"github.com/KasperSaaby/calculatron-service/internal/store/database"
+	"github.com/go-openapi/errors"
+	"github.com/go-openapi/loads"
 	"go.uber.org/fx"
 )
 
@@ -21,7 +25,7 @@ func Opts() fx.Option {
 	return fx.Options(
 		fx.Provide(
 			NewDatabase,
-			NewHTTPServer,
+			NewSwaggerAPI,
 		),
 		fx.Invoke(
 			database.MigrateSchemas,
@@ -45,27 +49,40 @@ func NewDatabase(lc fx.Lifecycle) (*sql.DB, error) {
 	return db, nil
 }
 
-func NewHTTPServer(lc fx.Lifecycle) *http.ServeMux {
-	mux := http.NewServeMux()
+func NewSwaggerAPI(lc fx.Lifecycle) (*operations.CalculatronServiceAPI, error) {
+	spec, err := loads.Analyzed(restapi.SwaggerJSON, "")
+	if err != nil {
+		return nil, fmt.Errorf("load swagger spec: %w", err)
+	}
+
+	portStr := os.Getenv("PORT")
+	if portStr == "" {
+		return nil, fmt.Errorf("no PORT environment variable defined")
+	}
+
+	port, err := strconv.Atoi(portStr)
+	if err != nil {
+		return nil, fmt.Errorf("invalid PORT environment variable %q", portStr)
+	}
+
+	api := operations.NewCalculatronServiceAPI(spec)
+	api.ServeError = errors.ServeError
+	server := restapi.NewServer(api)
+	server.Port = port
+	server.Host = "localhost"
 
 	lc.Append(fx.Hook{
-		OnStart: func(_ context.Context) error {
-			port := os.Getenv("PORT")
-			if port == "" {
-				return fmt.Errorf("no PORT environment variable defined")
-			}
-
-			go func() {
-				logger.Infof("Application listening on port %s", port)
-				err := http.ListenAndServe(fmt.Sprintf(":%s", port), mux)
-				if err != nil {
-					logger.Errf(err, "Listening on port %s", port)
-				}
-			}()
-
-			return nil
+		OnStop: func(ctx context.Context) error {
+			return server.Shutdown()
 		},
 	})
 
-	return mux
+	go func() {
+		err := server.Serve()
+		if err != nil {
+			logger.Errf(err, "Starting server")
+		}
+	}()
+
+	return api, nil
 }

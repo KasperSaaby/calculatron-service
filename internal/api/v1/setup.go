@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"net/http"
 	"os"
 
+	"github.com/KasperSaaby/calculatron-service/generated/restapi/operations"
 	"github.com/KasperSaaby/calculatron-service/internal/api/v1/handlers/calculate"
 	"github.com/KasperSaaby/calculatron-service/internal/api/v1/handlers/history"
 	"github.com/KasperSaaby/calculatron-service/internal/api/v1/handlers/ping"
@@ -14,7 +14,7 @@ import (
 	"github.com/KasperSaaby/calculatron-service/internal/store"
 )
 
-func Setup(mux *http.ServeMux, db *sql.DB) error {
+func Setup(api *operations.CalculatronServiceAPI, db *sql.DB) error {
 	storeType := os.Getenv("HISTORY_STORE_TYPE")
 	if storeType == "" {
 		return errors.New("HISTORY_STORE_TYPE must be defined")
@@ -33,10 +33,10 @@ func Setup(mux *http.ServeMux, db *sql.DB) error {
 	calculatorService := app.NewCalculatorService(historyStore)
 	historyService := app.NewHistoryService(historyStore)
 
-	mux.HandleFunc("/v1/ping", ping.Handler())
-	mux.HandleFunc("/v1/calculate", calculate.Handler(calculatorService))
-	mux.HandleFunc("/v1/history", history.Handler(historyService))
-	mux.HandleFunc("/v1/history/{operationId}", history.HandlerWithPathID(historyService))
+	api.GetPingHandler = ping.GetPingHandler()
+	api.PostCalculatorHandler = calculate.PostCalculateHandler(calculatorService)
+	api.GetHistoryEntriesHandler = history.GetHistoryEntriesHandler(historyService)
+	api.GetHistoryEntryHandler = history.GetHistoryEntryHandler(historyService)
 
 	return nil
 }

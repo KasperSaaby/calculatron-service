@@ -1,0 +1,166 @@
+swagger: "2.0"
+
+info:
+  title: "Calculatron - An over-engineered calculator"
+  version: "0.0.1"
+
+paths:
+  /v1/ping:
+    get:
+      summary: Get the service
+      operationId: getPing
+      responses:
+        200:
+          description: OK
+          schema:
+            type: string
+
+  /v1/calculate:
+    post:
+      summary: Calculator
+      operationId: postCalculator
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/PostCalculateRequest"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/PostCalculateResponse"
+        400:
+          $ref: "#/responses/BadRequest"
+        500:
+          $ref: "#/responses/InternalError"
+
+  /v1/history:
+    get:
+      summary: Get history list
+      operationId: getHistoryEntries
+      parameters:
+        - in: query
+          name: offset
+          required: true
+          type: integer
+          format: int32
+        - in: query
+          name: limit
+          required: true
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/GetHistoryEntriesResponse"
+        500:
+          $ref: "#/responses/InternalError"
+
+  /v1/history/{operationId}:
+    get:
+      summary: Get history
+      operationId: getHistoryEntry
+      parameters:
+        - in: path
+          name: operationId
+          type: string
+          required: true
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/GetHistoryEntryResponse"
+        404:
+          $ref: "#/responses/NotFound"
+        500:
+          $ref: "#/responses/InternalError"
+
+responses:
+  BadRequest:
+    description: Client error
+    schema:
+      $ref: "#/definitions/ErrorModel"
+
+  NotFound:
+    description: The resource was not found
+    schema:
+      $ref: '#/definitions/ErrorModel'
+
+  InternalError:
+    description: Internal error
+    schema:
+      $ref: "#/definitions/ErrorModel"
+
+definitions:
+  PostCalculateRequest:
+    type: object
+    properties:
+      operationType:
+        type: string
+      operands:
+        type: array
+        items:
+          type: number
+      precision:
+        type: integer
+        format: int32
+
+  PostCalculateResponse:
+    type: object
+    properties:
+      result:
+        type: number
+      precision:
+        type: integer
+        format: int32
+      operationId:
+        type: string
+      timestamp:
+        type: string
+        format: ISO8601
+
+  GetHistoryEntriesResponse:
+    type: object
+    properties:
+      entries:
+        type: array
+        items:
+          $ref: "#/definitions/Entry"
+
+  GetHistoryEntryResponse:
+    type: object
+    properties:
+      entry:
+        $ref: "#/definitions/Entry"
+
+  Entry:
+    type: object
+    properties:
+      operationId:
+        type: string
+      operationType:
+        type: string
+      operands:
+        type: array
+        items:
+          type: number
+      result:
+        type: number
+      precision:
+        type: integer
+        format: int32
+      timestamp:
+        type: string
+        format: ISO8601
+
+  ErrorModel:
+    type: object
+    properties:
+      message:
+        type: string
+      reasonCode:
+        type: string

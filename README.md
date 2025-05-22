@@ -30,3 +30,5 @@ docker run --name pg -e POSTGRES_PASSWORD=lunar -p 5432:5432 -d postgres
 # postgres will probably already exist
 docker exec -ti pg createdb -U postgres postgres
 docker exec -ti pg psql -U postgres
+
+swagger generate server --spec api/swagger.yaml --name calculatron-service --exclude-main --target ./generated
