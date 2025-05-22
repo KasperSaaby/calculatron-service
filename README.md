@@ -20,3 +20,8 @@ Nice to have:
 As the title says, it is an over-engineered calculator, which means:
 You should go all-in on design patterns and best practices as well as making sure to fulfill the "must have" requirements.
 The coding language is also up to you, but GO lang would be preferred, since it is part of our tech stack.
+
+## Project solution
+
+Service running on GCP using Cloud Run:
+- https://calculatron-239545498088.europe-west1.run.app
