@@ -69,7 +69,6 @@ func NewSwaggerAPI(lc fx.Lifecycle) (*operations.CalculatronServiceAPI, error) {
 	api.ServeError = errors.ServeError
 	server := restapi.NewServer(api)
 	server.Port = port
-	server.Host = "localhost"
 
 	lc.Append(fx.Hook{
 		OnStop: func(ctx context.Context) error {
