@@ -12,20 +12,15 @@ import (
 )
 
 const (
-	DefaultLimit = 20
-	MaxLimit     = 20
+	QueryParam_DefaultLimit = 20
+	QueryParam_MaxLimit     = 100
 )
 
 func Handler(historyService *app.HistoryService) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
-			var (
-				ctx       = r.Context()
-				offsetStr = r.URL.Query().Get("offset")
-				limitStr  = r.URL.Query().Get("limit")
-			)
-
+			offsetStr := r.URL.Query().Get("offset")
 			offset, err := strconv.Atoi(offsetStr)
 			if err != nil {
 				logger.Infof("Invalid offset parameter %q: %v", offsetStr, err)
@@ -36,21 +31,22 @@ func Handler(historyService *app.HistoryService) func(w http.ResponseWriter, r *
 				offset = 0
 			}
 
+			limitStr := r.URL.Query().Get("limit")
 			limit, err := strconv.Atoi(limitStr)
 			if err != nil {
 				logger.Infof("Invalid limit parameter %q: %v", limitStr, err)
-				limit = DefaultLimit
+				limit = QueryParam_DefaultLimit
 			}
 
 			if limit < 0 {
 				limit = 20
 			}
 
-			if limit > MaxLimit {
-				limit = MaxLimit
+			if limit > QueryParam_MaxLimit {
+				limit = QueryParam_MaxLimit
 			}
 
-			historyEntries, err := historyService.GetHistory(ctx, offset, limit)
+			historyEntries, err := historyService.GetHistory(r.Context(), offset, limit)
 			if err != nil {
 				logger.Errf(err, "Get history entries")
 				w.WriteHeader(http.StatusInternalServerError)
@@ -98,6 +94,7 @@ func HandlerWithPathID(historyService *app.HistoryService) func(w http.ResponseW
 			operationId := r.PathValue("operationId")
 			if operationId == "" {
 				w.WriteHeader(http.StatusBadRequest)
+				return
 			}
 
 			historyEntry, err := historyService.GetHistoryByID(r.Context(), values.OperationID(operationId))
