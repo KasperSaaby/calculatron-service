@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func Test_CalculatorService(t *testing.T) {
+func Test_CalculatorService_PerformCalculation(t *testing.T) {
 	storeFactory, err := store.GetStoreFactory(store.InMemory_Type, nil)
 	require.NoError(t, err)
 
