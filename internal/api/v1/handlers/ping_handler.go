@@ -1,4 +1,4 @@
-package ping
+package handlers
 
 import (
 	"github.com/KasperSaaby/calculatron-service/generated/restapi/operations"

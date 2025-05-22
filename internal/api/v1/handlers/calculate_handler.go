@@ -1,4 +1,4 @@
-package calculate
+package handlers
 
 import (
 	"errors"
