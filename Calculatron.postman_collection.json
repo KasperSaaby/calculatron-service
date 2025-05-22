@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"operation_type\": \"add\",\n    \"operands\": [\n        5.5,\n        7.24\n    ],\n    \"precision\": 1,\n    \"async\": false,\n    \"metadata\": {\n        \"requestId\": \"0a7a3fd9-f174-4140-ade0-5e6b498ae7f5\",\n        \"source\": \"web\"\n    }\n}",
+							"raw": "{\n    \"operationType\": \"power\",\n    \"operands\": [\n        5.5,\n        7.9\n    ],\n    \"precision\": 1,\n    \"async\": false,\n    \"metadata\": {\n        \"requestId\": \"0a7a3fd9-f174-4140-ade0-5e6b498ae7f5\",\n        \"source\": \"web\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -41,6 +41,33 @@
 					"request": {
 						"method": "GET",
 						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "history",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "history/{operationId}",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{path}}/{{version}}/history/0da2cdca-b888-42a5-88d0-5551f92a428c",
+							"host": [
+								"{{path}}"
+							],
+							"path": [
+								"{{version}}",
+								"history",
+								"0da2cdca-b888-42a5-88d0-5551f92a428c"
+							]
+						}
 					},
 					"response": []
 				}
