@@ -71,17 +71,20 @@ func NewSwaggerAPI(lc fx.Lifecycle) (*operations.CalculatronServiceAPI, error) {
 	server.Port = port
 
 	lc.Append(fx.Hook{
+		OnStart: func(ctx context.Context) error {
+			go func() {
+				err := server.Serve()
+				if err != nil {
+					logger.Errf(err, "Serving HTTP server")
+				}
+			}()
+
+			return nil
+		},
 		OnStop: func(ctx context.Context) error {
 			return server.Shutdown()
 		},
 	})
-
-	go func() {
-		err := server.Serve()
-		if err != nil {
-			logger.Errf(err, "Starting server")
-		}
-	}()
 
 	return api, nil
 }
