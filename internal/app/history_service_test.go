@@ -112,3 +112,66 @@ func Test_HistoryStore_GetHistory(t *testing.T) {
 		})
 	}
 }
+
+func Test_HistoryStore_GetHistoryByID(t *testing.T) {
+	testCases := []struct {
+		name          string
+		operationID   values.OperationID
+		mockEntry     values.HistoryEntry
+		mockError     error
+		expectedError bool
+	}{
+		{
+			name:        "successful retrieval",
+			operationID: values.NewOperationID(),
+			mockEntry: values.HistoryEntry{
+				OperationID:   values.NewOperationID(),
+				OperationType: values.OperationType_Add,
+				Operands:      []float64{1, 2},
+				Result:        3,
+				Precision:     2,
+				Timestamp:     time.Now(),
+			},
+			mockError:     nil,
+			expectedError: false,
+		},
+		{
+			name:          "store error",
+			operationID:   values.NewOperationID(),
+			mockEntry:     values.HistoryEntry{},
+			mockError:     errors.New("database error"),
+			expectedError: true,
+		},
+		{
+			name:          "not found error",
+			operationID:   values.NewOperationID(),
+			mockEntry:     values.HistoryEntry{},
+			mockError:     values.ErrHistoryEntryNotFound,
+			expectedError: true,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			ctx := context.Background()
+			mockStore := &mocks.HistoryStoreMock{}
+			sut := NewHistoryService(mockStore)
+
+			mockStore.GetCalculationByIDFunc = func(ctx context.Context, operationID values.OperationID) (values.HistoryEntry, error) {
+				assert.Equal(t, tc.operationID, operationID)
+				return tc.mockEntry, tc.mockError
+			}
+
+			entry, err := sut.GetHistoryByID(ctx, tc.operationID)
+
+			if tc.expectedError {
+				assert.Error(t, err)
+				assert.Empty(t, entry)
+				return
+			}
+
+			require.NoError(t, err)
+			assert.Equal(t, tc.mockEntry, entry)
+		})
+	}
+}
