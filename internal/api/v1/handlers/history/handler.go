@@ -2,6 +2,7 @@ package history
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strconv"
 	"time"
@@ -99,6 +100,11 @@ func HandlerWithPathID(historyService *app.HistoryService) func(w http.ResponseW
 
 			historyEntry, err := historyService.GetHistoryByID(r.Context(), values.OperationID(operationId))
 			if err != nil {
+				if errors.Is(err, values.ErrHistoryEntryNotFound) {
+					w.WriteHeader(http.StatusNotFound)
+					return
+				}
+
 				logger.Errf(err, "Get history entry")
 				w.WriteHeader(http.StatusInternalServerError)
 				return

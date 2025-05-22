@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"time"
 
@@ -53,6 +54,9 @@ func (r *HistoryRepo) FindAll(ctx context.Context, offset, limit int) ([]values.
 func (r *HistoryRepo) FindByID(ctx context.Context, operationID values.OperationID) (values.HistoryEntry, error) {
 	entity, err := r.querier.FindByID(ctx, operationID.String())
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return values.HistoryEntry{}, values.ErrHistoryEntryNotFound
+		}
 		return values.HistoryEntry{}, fmt.Errorf("find history entry by id %s: %w", operationID, err)
 	}
 

@@ -62,6 +62,7 @@ func Handler(service *app.CalculatorService) func(w http.ResponseWriter, r *http
 			if err != nil {
 				logger.Errf(err, "Marshal response")
 				w.WriteHeader(http.StatusInternalServerError)
+				return
 			}
 
 			w.Header().Set("Content-Type", "application/json")
@@ -69,6 +70,7 @@ func Handler(service *app.CalculatorService) func(w http.ResponseWriter, r *http
 			if err != nil {
 				logger.Errf(err, "Write response")
 				w.WriteHeader(http.StatusInternalServerError)
+				return
 			}
 
 			return

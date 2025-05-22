@@ -53,9 +53,10 @@ func (s *InMemoryHistoryStore) GetCalculationByID(_ context.Context, operationID
 	s.mux.RLock()
 	defer s.mux.RUnlock()
 
-	if entry, ok := s.entries[operationID]; ok {
-		return entry, nil
+	entry, exist := s.entries[operationID]
+	if !exist {
+		return values.HistoryEntry{}, values.ErrHistoryEntryNotFound
 	}
 
-	return values.HistoryEntry{}, fmt.Errorf("history entry not found")
+	return entry, nil
 }
