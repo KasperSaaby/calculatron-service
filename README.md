@@ -1,4 +1,4 @@
-# Project description
+## Project description
 
 Over-engineered calculator:
 
@@ -20,15 +20,3 @@ Nice to have:
 As the title says, it is an over-engineered calculator, which means:
 You should go all-in on design patterns and best practices as well as making sure to fulfill the "must have" requirements.
 The coding language is also up to you, but GO lang would be preferred, since it is part of our tech stack.
-
-# Create database
-
-https://medium.com/@roystatham3003/database-connection-golang-docker-dfff9e958e47
-https://cloud.google.com/sql/docs/postgres/connect-run#public-ip-default
-
-docker run --name pg -e POSTGRES_PASSWORD=lunar -p 5432:5432 -d postgres
-# postgres will probably already exist
-docker exec -ti pg createdb -U postgres postgres
-docker exec -ti pg psql -U postgres
-
-swagger generate server --spec api/swagger.yaml --name calculatron-service --exclude-main --target ./generated
