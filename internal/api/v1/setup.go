@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/KasperSaaby/calculatron-service/internal/api/v1/handlers/calculate"
+	"github.com/KasperSaaby/calculatron-service/internal/api/v1/handlers/history"
 	"github.com/KasperSaaby/calculatron-service/internal/api/v1/handlers/ping"
 	"github.com/KasperSaaby/calculatron-service/internal/app"
 	"github.com/KasperSaaby/calculatron-service/internal/store"
@@ -16,7 +17,7 @@ import (
 func Setup(mux *http.ServeMux, db *sql.DB) error {
 	storeType := os.Getenv("HISTORY_STORE_TYPE")
 	if storeType == "" {
-		return errors.New("HISTORY_STORE_TYPE must be set")
+		return errors.New("HISTORY_STORE_TYPE must be defined")
 	}
 
 	storeFactory, err := store.GetStoreFactory(store.Type(storeType), db)
@@ -30,9 +31,12 @@ func Setup(mux *http.ServeMux, db *sql.DB) error {
 	}
 
 	calculatorService := app.NewCalculatorService(historyStore)
+	historyService := app.NewHistoryService(historyStore)
 
 	mux.HandleFunc("/v1/ping", ping.Handler())
 	mux.HandleFunc("/v1/calculate", calculate.Handler(calculatorService))
+	mux.HandleFunc("/v1/history", history.Handler(historyService))
+	mux.HandleFunc("/v1/history/{operationId}", history.HandlerWithPathID(historyService))
 
 	return nil
 }

@@ -35,8 +35,8 @@ func (r *HistoryRepo) Create(ctx context.Context, entry values.HistoryEntry) err
 
 func (r *HistoryRepo) FindAll(ctx context.Context, offset, limit int) ([]values.HistoryEntry, error) {
 	entities, err := r.querier.FindAll(ctx, db.FindAllParams{
-		Limit:  int32(offset),
-		Offset: int32(limit),
+		Limit:  int32(limit),
+		Offset: int32(offset),
 	})
 	if err != nil {
 		return nil, fmt.Errorf("find history entries with offset %d and limit %d: %w", offset, limit, err)
