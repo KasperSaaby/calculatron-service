@@ -9,6 +9,7 @@ import (
 	"github.com/KasperSaaby/calculatron-service/generated/restapi/operations"
 	"github.com/KasperSaaby/calculatron-service/internal/api/v1/handlers"
 	"github.com/KasperSaaby/calculatron-service/internal/app"
+	domain "github.com/KasperSaaby/calculatron-service/internal/domain/operations"
 	"github.com/KasperSaaby/calculatron-service/internal/store"
 )
 
@@ -28,7 +29,8 @@ func Setup(api *operations.CalculatronServiceAPI, db *sql.DB) error {
 		return fmt.Errorf("create history store: %w", err)
 	}
 
-	calculatorService := app.NewCalculatorService(historyStore)
+	operationFactory := domain.NewOperationFactory()
+	calculatorService := app.NewCalculatorService(operationFactory, historyStore)
 	historyService := app.NewHistoryService(historyStore)
 
 	api.GetPingHandler = handlers.GetPingHandler()

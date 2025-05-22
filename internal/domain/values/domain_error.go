@@ -8,6 +8,7 @@ const (
 	Code_TwoOrMoreOperandsRequired Code = "two_or_more_operands_required"
 	Code_TwoOperandsRequired       Code = "two_operands_required"
 	Code_DivisionByZero            Code = "division_by_zero"
+	Code_UnsupportedOperation      Code = "unsupported_operation"
 )
 
 type DomainError struct {

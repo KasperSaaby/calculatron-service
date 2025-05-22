@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/KasperSaaby/calculatron-service/internal/domain/operations"
 	"github.com/KasperSaaby/calculatron-service/internal/domain/values"
 	"github.com/KasperSaaby/calculatron-service/internal/store"
 	"github.com/stretchr/testify/assert"
@@ -11,6 +12,7 @@ import (
 )
 
 func Test_CalculatorService_PerformCalculation(t *testing.T) {
+	operationFactory := operations.NewOperationFactory()
 	storeFactory, err := store.GetStoreFactory(store.InMemory_Type, nil)
 	require.NoError(t, err)
 
@@ -45,7 +47,7 @@ func Test_CalculatorService_PerformCalculation(t *testing.T) {
 			operands:      []float64{1, 2},
 			precision:     2,
 			expectErr:     true,
-			errMsg:        "operation \"unsupported\" is not supported",
+			errMsg:        "unsupported operation type",
 		},
 		{
 			name:           "successful addition",
@@ -71,7 +73,7 @@ func Test_CalculatorService_PerformCalculation(t *testing.T) {
 			require.NoError(t, err)
 
 			ctx := context.Background()
-			sut := NewCalculatorService(historyStore)
+			sut := NewCalculatorService(operationFactory, historyStore)
 
 			result, err := sut.PerformCalculation(ctx, tc.operationType, tc.operands, tc.precision)
 

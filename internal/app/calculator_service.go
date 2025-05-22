@@ -12,12 +12,14 @@ import (
 )
 
 type CalculatorService struct {
-	historyStore store.HistoryStore
+	operationFactory operations.OperationFactory
+	historyStore     store.HistoryStore
 }
 
-func NewCalculatorService(historyStore store.HistoryStore) *CalculatorService {
+func NewCalculatorService(operationFactory operations.OperationFactory, historyStore store.HistoryStore) *CalculatorService {
 	return &CalculatorService{
-		historyStore: historyStore,
+		operationFactory: operationFactory,
+		historyStore:     historyStore,
 	}
 }
 
@@ -30,12 +32,12 @@ func (s *CalculatorService) PerformCalculation(ctx context.Context, operationTyp
 		return values.CalculationResult{}, newAppError("precision cannot be negative")
 	}
 
-	op, exist := operations.Catalogue[operationType]
-	if !exist {
-		return values.CalculationResult{}, newAppError("operation %q is not supported", operationType)
+	operation, err := s.operationFactory.CreateOperation(operationType)
+	if err != nil {
+		return values.CalculationResult{}, err
 	}
 
-	result, err := op(operands...)
+	result, err := operation.Execute(operands...)
 	if err != nil {
 		return values.CalculationResult{}, fmt.Errorf("execute %q operation: %w", operationType, err)
 	}
