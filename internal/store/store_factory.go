@@ -13,9 +13,10 @@ type Factory interface {
 	CreateHistoryStore() (HistoryStore, error)
 }
 
+//go:generate moq -pkg mocks -out mocks/history_store_mock.go . HistoryStore
 type HistoryStore interface {
 	SaveCalculation(ctx context.Context, entry values.HistoryEntry) error
-	GetAllCalculations(ctx context.Context, limit, offset int) ([]values.HistoryEntry, error)
+	GetAllCalculations(ctx context.Context, offset, limit int) ([]values.HistoryEntry, error)
 	GetCalculationByID(ctx context.Context, operationID values.OperationID) (values.HistoryEntry, error)
 }
 
