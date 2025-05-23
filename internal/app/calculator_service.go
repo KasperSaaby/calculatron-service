@@ -5,20 +5,17 @@ import (
 	"time"
 
 	"github.com/KasperSaaby/calculatron-service/internal/app/models"
+	"github.com/KasperSaaby/calculatron-service/internal/app/validator"
 	"github.com/KasperSaaby/calculatron-service/internal/domain/operations"
 	"github.com/KasperSaaby/calculatron-service/internal/domain/values"
 )
 
-type inputValidator interface {
-	Validate(input models.CalculationInput) error
-}
-
 type CalculatorService struct {
 	operationFactory operations.OperationFactory
-	validator        inputValidator
+	validator        *validator.CalculationInputValidator
 }
 
-func NewCalculatorService(operationFactory operations.OperationFactory, validator inputValidator) *CalculatorService {
+func NewCalculatorService(operationFactory operations.OperationFactory, validator *validator.CalculationInputValidator) *CalculatorService {
 	return &CalculatorService{
 		operationFactory: operationFactory,
 		validator:        validator,

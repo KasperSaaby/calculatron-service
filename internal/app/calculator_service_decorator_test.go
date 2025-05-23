@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/KasperSaaby/calculatron-service/internal/app/models"
+	"github.com/KasperSaaby/calculatron-service/internal/app/validator"
 	"github.com/KasperSaaby/calculatron-service/internal/domain/operations"
 	"github.com/KasperSaaby/calculatron-service/internal/domain/values"
 	"github.com/KasperSaaby/calculatron-service/internal/store"
@@ -21,7 +22,8 @@ func Test_CalculatorServiceDecorator_PerformCalculation(t *testing.T) {
 		ctx := context.Background()
 		historyStore, err := storeFactory.CreateHistoryStore()
 		require.NoError(t, err)
-		calculatorService := NewCalculatorService(operationFactory)
+		calculationInputValidator := validator.NewCalculationInputValidator()
+		calculatorService := NewCalculatorService(operationFactory, calculationInputValidator)
 		sut := NewCalculatorServiceDecorator(calculatorService, historyStore)
 
 		operationType := values.OperationType_Add
@@ -29,9 +31,7 @@ func Test_CalculatorServiceDecorator_PerformCalculation(t *testing.T) {
 		precision := 2
 		expectedResult := 3.00
 
-		input, err := models.NewCalculationInput(operationType.String(), operands, precision)
-		require.NoError(t, err)
-
+		input := models.NewCalculationInput(operationType.String(), operands, precision)
 		result, err := sut.PerformCalculation(ctx, input)
 
 		// Assert that calculation was performed successfully

@@ -71,7 +71,6 @@ func Test_CalculatorService_PerformCalculation(t *testing.T) {
 			sut := NewCalculatorService(operationFactory, calculationInputValidator)
 
 			input := models.NewCalculationInput(tc.operationType.String(), tc.operands, tc.precision)
-
 			result, err := sut.PerformCalculation(ctx, input)
 
 			if tc.expectErr {
