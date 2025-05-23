@@ -37,7 +37,7 @@ func Test_CalculatorServiceDecorator_PerformCalculation(t *testing.T) {
 		assert.NotEmpty(t, result.OperationID)
 		assert.NotZero(t, result.Timestamp)
 
-		// Assert that the calculation was stored in history
+		// Assert that calculation was stored in history
 		history, err := historyStore.GetAllCalculations(ctx, 0, 1)
 		require.NoError(t, err)
 		require.Len(t, history, 1)
