@@ -5,7 +5,7 @@ REGION="europe-west1" # Using current location's approximate region
 SERVICE_NAME="calculatron-service"
 
 # Build the Docker image locally
-docker buildx build --platform linux/amd64 -t gcr.io/${PROJECT_ID}/${SERVICE_NAME} .
+docker buildx build --platform linux/amd64 -t gcr.io/${PROJECT_ID}/${SERVICE_NAME} ../
 
 # Push the image to Google Container Registry (GCR) or Artifact Registry
 # For new projects, Artifact Registry is generally preferred.

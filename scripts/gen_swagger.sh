@@ -1,0 +1,1 @@
+docker run --rm -it  --user $(id -u):$(id -g) -v $HOME:$HOME -w $PWD quay.io/goswagger/swagger generate server --spec ../api/swagger.yaml --name calculatron-service --exclude-main --target ../generated
