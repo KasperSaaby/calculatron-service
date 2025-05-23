@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/KasperSaaby/calculatron-service/internal/app/models"
@@ -29,7 +28,7 @@ func NewCalculatorService(operationFactory operations.OperationFactory, validato
 func (s *CalculatorService) PerformCalculation(_ context.Context, input models.CalculationInput) (models.CalculationResult, error) {
 	err := s.validator.Validate(input)
 	if err != nil {
-		return models.CalculationResult{}, fmt.Errorf("invalid input: %w", err)
+		return models.CalculationResult{}, err
 	}
 
 	operation, err := s.operationFactory.CreateOperation(input.OperationType())
@@ -39,7 +38,7 @@ func (s *CalculatorService) PerformCalculation(_ context.Context, input models.C
 
 	result, err := operation.Execute(input.Precision(), input.Operands()...)
 	if err != nil {
-		return models.CalculationResult{}, fmt.Errorf("execute %q operation: %w", input.OperationType(), err)
+		return models.CalculationResult{}, err
 	}
 
 	return models.CalculationResult{

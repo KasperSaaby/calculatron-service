@@ -8,6 +8,7 @@ import (
 	"github.com/KasperSaaby/calculatron-service/generated/restapi/operations"
 	"github.com/KasperSaaby/calculatron-service/internal/app"
 	appmodels "github.com/KasperSaaby/calculatron-service/internal/app/models"
+	"github.com/KasperSaaby/calculatron-service/internal/app/validator"
 	"github.com/KasperSaaby/calculatron-service/internal/platform/logger"
 	"github.com/go-openapi/runtime/middleware"
 )
@@ -22,9 +23,9 @@ func PostCalculateHandler(calculatorService app.Calculator) operations.PostCalcu
 
 		result, err := calculatorService.PerformCalculation(params.HTTPRequest.Context(), input)
 		if err != nil {
-			var appError *app.AppError
-			if errors.As(err, &appError) {
-				logger.Infof("App error: %v", appError)
+			var validationError *validator.ValidationError
+			if errors.As(err, &validationError) {
+				logger.Infof("Validation error: %v", validationError)
 				return operations.NewPostCalculatorBadRequest()
 			}
 
