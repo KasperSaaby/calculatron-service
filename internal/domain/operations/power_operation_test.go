@@ -54,14 +54,14 @@ func Test_PowerOperation(t *testing.T) {
 			name:           "rounding to specified precision",
 			operands:       []float64{2.345, 2.789},
 			precision:      2,
-			expectedResult: 7.89,
+			expectedResult: 10.77,
 			expectError:    false,
 		},
 		{
 			name:           "rounding to zero precision",
 			operands:       []float64{2.345, 2.789},
 			precision:      0,
-			expectedResult: 8,
+			expectedResult: 11,
 			expectError:    false,
 		},
 		{
