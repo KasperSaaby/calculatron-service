@@ -162,7 +162,7 @@ func Test_HistoryStore_GetHistoryByID(t *testing.T) {
 				return tc.mockEntry, tc.mockError
 			}
 
-			entry, err := sut.GetHistoryByID(ctx, tc.operationID)
+			entry, err := sut.GetHistoryByID(ctx, tc.operationID.String())
 
 			if tc.expectedError {
 				assert.Error(t, err)
