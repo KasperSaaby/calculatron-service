@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/KasperSaaby/calculatron-service/internal/domain/values"
+	"github.com/KasperSaaby/calculatron-service/internal/store/in_memory"
 	"github.com/KasperSaaby/calculatron-service/internal/store/repository"
 )
 
@@ -43,7 +44,7 @@ func NewInMemoryStoreFactory() (Factory, error) {
 }
 
 func (f *inMemoryStoreFactory) CreateHistoryStore() (HistoryStore, error) {
-	return NewInMemoryHistoryStore(), nil
+	return NewInMemoryHistoryStore(in_memory.NewHistoryStore()), nil
 }
 
 type Type string

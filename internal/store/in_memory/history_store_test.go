@@ -1,7 +1,6 @@
-package store
+package in_memory
 
 import (
-	"context"
 	"testing"
 	"time"
 
@@ -55,15 +54,14 @@ func Test_InMemoryHistoryStore_SaveCalculation(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			sut := NewInMemoryHistoryStore()
-			ctx := context.Background()
+			sut := NewHistoryStore()
 
 			if tc.existingEntry != nil {
-				err := sut.SaveCalculation(ctx, *tc.existingEntry)
+				err := sut.Create(*tc.existingEntry)
 				require.NoError(t, err)
 			}
 
-			err := sut.SaveCalculation(ctx, tc.newEntry)
+			err := sut.Create(tc.newEntry)
 
 			if tc.expectError {
 				assert.Error(t, err)
@@ -71,7 +69,7 @@ func Test_InMemoryHistoryStore_SaveCalculation(t *testing.T) {
 			}
 
 			require.NoError(t, err)
-			entries, err := sut.GetAllCalculations(ctx, 0, 1)
+			entries, err := sut.GetAll(0, 1)
 			assert.NoError(t, err)
 			assert.Len(t, entries, 1)
 			assert.Equal(t, tc.newEntry, entries[0])
@@ -209,15 +207,14 @@ func Test_InMemoryHistoryStore_GetAllCalculations(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			sut := NewInMemoryHistoryStore()
-			ctx := context.Background()
+			sut := NewHistoryStore()
 
 			for _, entry := range tc.existingEntries {
-				err := sut.SaveCalculation(ctx, entry)
+				err := sut.Create(entry)
 				require.NoError(t, err)
 			}
 
-			entries, err := sut.GetAllCalculations(ctx, tc.offset, tc.limit)
+			entries, err := sut.GetAll(tc.offset, tc.limit)
 
 			if tc.expectedError {
 				assert.Error(t, err)
@@ -272,13 +269,12 @@ func Test_InMemoryHistoryStore_GetCalculationByID(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			sut := NewInMemoryHistoryStore()
-			ctx := context.Background()
+			sut := NewHistoryStore()
 
-			err := sut.SaveCalculation(ctx, tc.existingEntry)
+			err := sut.Create(tc.existingEntry)
 			require.NoError(t, err)
 
-			entry, err := sut.GetCalculationByID(ctx, tc.operationID)
+			entry, err := sut.GetByID(tc.operationID)
 
 			if tc.expectError {
 				assert.Error(t, err)
