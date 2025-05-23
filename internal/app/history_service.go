@@ -27,8 +27,8 @@ func (s *HistoryService) GetHistory(ctx context.Context, offset, limit int) ([]v
 	return historyEntries, nil
 }
 
-func (s *HistoryService) GetHistoryByID(ctx context.Context, operationID values.OperationID) (values.HistoryEntry, error) {
-	historyEntry, err := s.historyStore.GetCalculationByID(ctx, operationID)
+func (s *HistoryService) GetHistoryByID(ctx context.Context, operationID string) (values.HistoryEntry, error) {
+	historyEntry, err := s.historyStore.GetCalculationByID(ctx, values.OperationID(operationID))
 	if err != nil {
 		return values.HistoryEntry{}, fmt.Errorf("get history entry: %w", err)
 	}

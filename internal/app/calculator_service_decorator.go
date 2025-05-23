@@ -4,12 +4,13 @@ import (
 	"context"
 	"time"
 
+	"github.com/KasperSaaby/calculatron-service/internal/app/models"
 	"github.com/KasperSaaby/calculatron-service/internal/domain/values"
 	"github.com/KasperSaaby/calculatron-service/internal/store"
 )
 
 type Calculator interface {
-	PerformCalculation(ctx context.Context, operationType values.OperationType, operands []float64, precision int) (values.CalculationResult, error)
+	PerformCalculation(ctx context.Context, input models.CalculationInput) (models.CalculationResult, error)
 }
 
 type CalculatorServiceDecorator struct {
@@ -24,22 +25,22 @@ func NewCalculatorServiceDecorator(calculator Calculator, store store.HistorySto
 	}
 }
 
-func (d *CalculatorServiceDecorator) PerformCalculation(ctx context.Context, operationType values.OperationType, operands []float64, precision int) (values.CalculationResult, error) {
-	result, err := d.calculator.PerformCalculation(ctx, operationType, operands, precision)
+func (d *CalculatorServiceDecorator) PerformCalculation(ctx context.Context, input models.CalculationInput) (models.CalculationResult, error) {
+	result, err := d.calculator.PerformCalculation(ctx, input)
 	if err != nil {
-		return values.CalculationResult{}, err
+		return models.CalculationResult{}, err
 	}
 
 	err = d.store.SaveCalculation(ctx, values.HistoryEntry{
 		OperationID:   result.OperationID,
-		OperationType: operationType,
-		Operands:      operands,
+		OperationType: input.OperationType(),
+		Operands:      input.Operands(),
 		Result:        result.Result,
-		Precision:     precision,
+		Precision:     input.Precision(),
 		Timestamp:     time.Now(),
 	})
 	if err != nil {
-		return values.CalculationResult{}, err
+		return models.CalculationResult{}, err
 	}
 
 	return result, nil

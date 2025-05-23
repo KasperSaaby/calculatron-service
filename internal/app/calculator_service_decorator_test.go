@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/KasperSaaby/calculatron-service/internal/app/models"
 	"github.com/KasperSaaby/calculatron-service/internal/domain/operations"
 	"github.com/KasperSaaby/calculatron-service/internal/domain/values"
 	"github.com/KasperSaaby/calculatron-service/internal/store"
@@ -28,7 +29,10 @@ func Test_CalculatorServiceDecorator_PerformCalculation(t *testing.T) {
 		precision := 2
 		expectedResult := 3.00
 
-		result, err := sut.PerformCalculation(ctx, operationType, operands, precision)
+		input, err := models.NewCalculationInput(operationType.String(), operands, precision)
+		require.NoError(t, err)
+
+		result, err := sut.PerformCalculation(ctx, input)
 
 		// Assert that calculation was performed successfully
 		assert.NoError(t, err)

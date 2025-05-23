@@ -57,7 +57,7 @@ func GetHistoryEntriesHandler(historyService *app.HistoryService) operations.Get
 
 func GetHistoryEntryHandler(historyService *app.HistoryService) operations.GetHistoryEntryHandlerFunc {
 	return func(params operations.GetHistoryEntryParams) middleware.Responder {
-		entry, err := historyService.GetHistoryByID(params.HTTPRequest.Context(), values.OperationID(params.OperationID))
+		entry, err := historyService.GetHistoryByID(params.HTTPRequest.Context(), params.OperationID)
 		if err != nil {
 			if errors.Is(err, values.ErrHistoryEntryNotFound) {
 				return operations.NewGetHistoryEntryNotFound()

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/KasperSaaby/calculatron-service/internal/app/models"
 	"github.com/KasperSaaby/calculatron-service/internal/domain/operations"
 	"github.com/KasperSaaby/calculatron-service/internal/domain/values"
 )
@@ -19,28 +20,20 @@ func NewCalculatorService(operationFactory operations.OperationFactory) *Calcula
 	}
 }
 
-func (s *CalculatorService) PerformCalculation(_ context.Context, operationType values.OperationType, operands []float64, precision int) (values.CalculationResult, error) {
-	if len(operands) == 0 {
-		return values.CalculationResult{}, newAppError("no operands provided")
-	}
-
-	if precision < 0 {
-		return values.CalculationResult{}, newAppError("precision cannot be negative")
-	}
-
-	operation, err := s.operationFactory.CreateOperation(operationType)
+func (s *CalculatorService) PerformCalculation(_ context.Context, input models.CalculationInput) (models.CalculationResult, error) {
+	operation, err := s.operationFactory.CreateOperation(input.OperationType())
 	if err != nil {
-		return values.CalculationResult{}, err
+		return models.CalculationResult{}, err
 	}
 
-	result, err := operation.Execute(precision, operands...)
+	result, err := operation.Execute(input.Precision(), input.Operands()...)
 	if err != nil {
-		return values.CalculationResult{}, fmt.Errorf("execute %q operation: %w", operationType, err)
+		return models.CalculationResult{}, fmt.Errorf("execute %q operation: %w", input.OperationType(), err)
 	}
 
-	return values.CalculationResult{
+	return models.CalculationResult{
 		Result:      result,
-		Precision:   precision,
+		Precision:   input.Precision(),
 		OperationID: values.NewOperationID(),
 		Timestamp:   time.Now(),
 	}, nil
