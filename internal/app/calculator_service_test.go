@@ -11,24 +11,45 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func Test_CalculatorService_PerformCalculation(t *testing.T) {
-	ctx := context.Background()
-	operationFactory := operations.NewOperationFactory()
-	sut := NewCalculatorService(operationFactory)
-
-	result, err := sut.PerformCalculation(ctx, values.OperationType_Add, []float64{1, 2}, 2)
-	assert.NoError(t, err)
-	assert.Equal(t, 3.00, result.Result)
-	assert.Equal(t, 2, result.Precision)
-	assert.NotEmpty(t, result.OperationID)
-	assert.NotZero(t, result.Timestamp)
-}
-
 func Test_CalculatorServiceDecorator_PerformCalculation(t *testing.T) {
 	operationFactory := operations.NewOperationFactory()
 	storeFactory, err := store.GetStoreFactory(store.InMemory_Type, nil)
 	require.NoError(t, err)
 
+	t.Run("successful addition and save to history", func(t *testing.T) {
+		ctx := context.Background()
+		historyStore, err := storeFactory.CreateHistoryStore()
+		require.NoError(t, err)
+		calculatorService := NewCalculatorService(operationFactory)
+		sut := NewCalculatorServiceDecorator(calculatorService, historyStore)
+
+		operationType := values.OperationType_Add
+		operands := []float64{1, 2}
+		precision := 2
+		expectedResult := 3.00
+
+		result, err := sut.PerformCalculation(ctx, operationType, operands, precision)
+
+		// Assert that calculation was performed successfully
+		assert.NoError(t, err)
+		assert.Equal(t, expectedResult, result.Result)
+		assert.Equal(t, precision, result.Precision)
+		assert.NotEmpty(t, result.OperationID)
+		assert.NotZero(t, result.Timestamp)
+
+		// Assert that the calculation was stored in history
+		history, err := historyStore.GetAllCalculations(ctx, 0, 1)
+		require.NoError(t, err)
+		require.Len(t, history, 1)
+		assert.Equal(t, result.OperationID, history[0].OperationID)
+		assert.Equal(t, operationType, history[0].OperationType)
+		assert.Equal(t, operands, history[0].Operands)
+		assert.Equal(t, expectedResult, history[0].Result)
+		assert.Equal(t, precision, history[0].Precision)
+	})
+}
+
+func Test_CalculatorService_PerformCalculation(t *testing.T) {
 	testCases := []struct {
 		name           string
 		operationType  values.OperationType
@@ -82,12 +103,9 @@ func Test_CalculatorServiceDecorator_PerformCalculation(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			historyStore, err := storeFactory.CreateHistoryStore()
-			require.NoError(t, err)
-
 			ctx := context.Background()
-			calculatorService := NewCalculatorService(operationFactory)
-			sut := NewCalculatorServiceDecorator(calculatorService, historyStore)
+			operationFactory := operations.NewOperationFactory()
+			sut := NewCalculatorService(operationFactory)
 
 			result, err := sut.PerformCalculation(ctx, tc.operationType, tc.operands, tc.precision)
 
@@ -102,16 +120,6 @@ func Test_CalculatorServiceDecorator_PerformCalculation(t *testing.T) {
 			assert.Equal(t, tc.precision, result.Precision)
 			assert.NotEmpty(t, result.OperationID)
 			assert.NotZero(t, result.Timestamp)
-
-			// Verify that the calculation was stored in history
-			history, err := historyStore.GetAllCalculations(ctx, 0, 1)
-			require.NoError(t, err)
-			require.Len(t, history, 1)
-			assert.Equal(t, result.OperationID, history[0].OperationID)
-			assert.Equal(t, tc.operationType, history[0].OperationType)
-			assert.Equal(t, tc.operands, history[0].Operands)
-			assert.Equal(t, tc.expectedResult, history[0].Result)
-			assert.Equal(t, int32(tc.precision), history[0].Precision)
 		})
 	}
 }

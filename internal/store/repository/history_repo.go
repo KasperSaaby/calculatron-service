@@ -28,7 +28,7 @@ func (r *HistoryRepo) Create(ctx context.Context, entry values.HistoryEntry) err
 		OperationType: entry.OperationType.String(),
 		Operands:      entry.Operands,
 		Result:        entry.Result,
-		Precision:     entry.Precision,
+		Precision:     int32(entry.Precision),
 		Timestamp:     time.Now(),
 		Metadata:      pqtype.NullRawMessage{},
 	})
@@ -69,7 +69,7 @@ func (*HistoryRepo) mapToDomain(history db.History) values.HistoryEntry {
 		OperationType: values.OperationType(history.OperationType),
 		Operands:      history.Operands,
 		Result:        history.Result,
-		Precision:     history.Precision,
+		Precision:     int(history.Precision),
 		Timestamp:     history.Timestamp,
 	}
 }
