@@ -10,17 +10,28 @@ import (
 	"github.com/KasperSaaby/calculatron-service/internal/domain/values"
 )
 
-type CalculatorService struct {
-	operationFactory operations.OperationFactory
+type inputValidator interface {
+	Validate(input models.CalculationInput) error
 }
 
-func NewCalculatorService(operationFactory operations.OperationFactory) *CalculatorService {
+type CalculatorService struct {
+	operationFactory operations.OperationFactory
+	validator        inputValidator
+}
+
+func NewCalculatorService(operationFactory operations.OperationFactory, validator inputValidator) *CalculatorService {
 	return &CalculatorService{
 		operationFactory: operationFactory,
+		validator:        validator,
 	}
 }
 
 func (s *CalculatorService) PerformCalculation(_ context.Context, input models.CalculationInput) (models.CalculationResult, error) {
+	err := s.validator.Validate(input)
+	if err != nil {
+		return models.CalculationResult{}, fmt.Errorf("invalid input: %w", err)
+	}
+
 	operation, err := s.operationFactory.CreateOperation(input.OperationType())
 	if err != nil {
 		return models.CalculationResult{}, err

@@ -9,6 +9,7 @@ import (
 	"github.com/KasperSaaby/calculatron-service/generated/restapi/operations"
 	"github.com/KasperSaaby/calculatron-service/internal/api/v1/handlers"
 	"github.com/KasperSaaby/calculatron-service/internal/app"
+	"github.com/KasperSaaby/calculatron-service/internal/app/validator"
 	domain "github.com/KasperSaaby/calculatron-service/internal/domain/operations"
 	"github.com/KasperSaaby/calculatron-service/internal/store"
 )
@@ -30,7 +31,8 @@ func Setup(api *operations.CalculatronServiceAPI, db *sql.DB) error {
 	}
 
 	operationFactory := domain.NewOperationFactory()
-	calculatorService := app.NewCalculatorService(operationFactory)
+	calculationInputValidator := validator.NewCalculationInputValidator()
+	calculatorService := app.NewCalculatorService(operationFactory, calculationInputValidator)
 	calculatorServiceDecorator := app.NewCalculatorServiceDecorator(calculatorService, historyStore)
 	historyService := app.NewHistoryService(historyStore)
 

@@ -5,10 +5,10 @@ import (
 	"testing"
 
 	"github.com/KasperSaaby/calculatron-service/internal/app/models"
+	"github.com/KasperSaaby/calculatron-service/internal/app/validator"
 	"github.com/KasperSaaby/calculatron-service/internal/domain/operations"
 	"github.com/KasperSaaby/calculatron-service/internal/domain/values"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func Test_CalculatorService_PerformCalculation(t *testing.T) {
@@ -67,10 +67,10 @@ func Test_CalculatorService_PerformCalculation(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			ctx := context.Background()
 			operationFactory := operations.NewOperationFactory()
-			sut := NewCalculatorService(operationFactory)
+			calculationInputValidator := validator.NewCalculationInputValidator()
+			sut := NewCalculatorService(operationFactory, calculationInputValidator)
 
-			input, err := models.NewCalculationInput(values.OperationType_Add.String(), tc.operands, tc.precision)
-			require.NoError(t, err)
+			input := models.NewCalculationInput(tc.operationType.String(), tc.operands, tc.precision)
 
 			result, err := sut.PerformCalculation(ctx, input)
 

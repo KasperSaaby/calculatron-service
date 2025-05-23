@@ -14,15 +14,11 @@ import (
 
 func PostCalculateHandler(calculatorService app.Calculator) operations.PostCalculatorHandlerFunc {
 	return func(params operations.PostCalculatorParams) middleware.Responder {
-		input, err := appmodels.NewCalculationInput(
+		input := appmodels.NewCalculationInput(
 			params.Body.OperationType,
 			params.Body.Operands,
 			int(params.Body.Precision),
 		)
-		if err != nil {
-			logger.Errf(err, "Invalid input")
-			return operations.NewPostCalculatorBadRequest()
-		}
 
 		result, err := calculatorService.PerformCalculation(params.HTTPRequest.Context(), input)
 		if err != nil {
