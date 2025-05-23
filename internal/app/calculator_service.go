@@ -3,7 +3,6 @@ package app
 import (
 	"context"
 	"fmt"
-	"math"
 	"time"
 
 	"github.com/KasperSaaby/calculatron-service/internal/domain/operations"
@@ -34,26 +33,15 @@ func (s *CalculatorService) PerformCalculation(_ context.Context, operationType 
 		return values.CalculationResult{}, err
 	}
 
-	result, err := operation.Execute(operands...)
+	result, err := operation.Execute(precision, operands...)
 	if err != nil {
 		return values.CalculationResult{}, fmt.Errorf("execute %q operation: %w", operationType, err)
 	}
 
-	roundedResult, err := s.roundFloat(result, precision)
-	if err != nil {
-		return values.CalculationResult{}, fmt.Errorf("round result: %w", err)
-	}
-
 	return values.CalculationResult{
-		Result:      roundedResult,
+		Result:      result,
 		Precision:   precision,
 		OperationID: values.NewOperationID(),
 		Timestamp:   time.Now(),
 	}, nil
-}
-
-func (s *CalculatorService) roundFloat(val float64, precision int) (float64, error) {
-	multiplier := math.Pow(10, float64(precision))
-	rounded := math.Round(val*multiplier) / multiplier
-	return rounded, nil
 }

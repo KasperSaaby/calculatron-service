@@ -14,7 +14,7 @@ func NewAddOperation() *AddOperation {
 	}
 }
 
-func (op *AddOperation) Execute(operands ...float64) (float64, error) {
+func (op *AddOperation) Execute(precision int, operands ...float64) (float64, error) {
 	if err := op.Validate(operands...); err != nil {
 		return 0, err
 	}
@@ -24,7 +24,7 @@ func (op *AddOperation) Execute(operands ...float64) (float64, error) {
 		result += operand
 	}
 
-	return result, nil
+	return op.RoundResult(result, precision), nil
 }
 
 func (op *AddOperation) Validate(operands ...float64) error {

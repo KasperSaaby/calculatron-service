@@ -6,17 +6,6 @@ import (
 	"github.com/KasperSaaby/calculatron-service/internal/domain/values"
 )
 
-func Add(operands ...float64) (float64, error) {
-	if len(operands) < 2 {
-		return 0, values.NewDomainError("addition requires at least two operands", values.Code_TwoOrMoreOperandsRequired)
-	}
-	result := 0.0
-	for _, operand := range operands {
-		result += operand
-	}
-	return result, nil
-}
-
 func Subtract(operands ...float64) (float64, error) {
 	if len(operands) != 2 {
 		return 0, values.NewDomainError("subtraction requires exactly two operands", values.Code_TwoOperandsRequired)
