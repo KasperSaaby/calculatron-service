@@ -46,7 +46,7 @@ func Test_CalculatorService_PerformCalculation(t *testing.T) {
 			errMsg:        "unsupported operation type",
 		},
 		{
-			name:           "successful addition",
+			name:           "successful addition with whole numbers",
 			operationType:  values.OperationType_Add,
 			operands:       []float64{1, 2},
 			precision:      2,
@@ -54,12 +54,28 @@ func Test_CalculatorService_PerformCalculation(t *testing.T) {
 			expectedResult: 3.00,
 		},
 		{
-			name:           "successful addition with rounding",
+			name:           "successful addition with decimals",
 			operationType:  values.OperationType_Add,
 			operands:       []float64{1.234, 2.345},
 			precision:      2,
 			expectErr:      false,
 			expectedResult: 3.58,
+		},
+		{
+			name:           "successful addition with high precision",
+			operationType:  values.OperationType_Add,
+			operands:       []float64{1.2345, 2.3456},
+			precision:      4,
+			expectErr:      false,
+			expectedResult: 3.5801,
+		},
+		{
+			name:           "successful addition with multiple operands",
+			operationType:  values.OperationType_Add,
+			operands:       []float64{1, 2, 3, 4},
+			precision:      2,
+			expectErr:      false,
+			expectedResult: 10.00,
 		},
 	}
 
