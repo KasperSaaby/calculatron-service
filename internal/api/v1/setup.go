@@ -30,11 +30,12 @@ func Setup(api *operations.CalculatronServiceAPI, db *sql.DB) error {
 	}
 
 	operationFactory := domain.NewOperationFactory()
-	calculatorService := app.NewCalculatorService(operationFactory, historyStore)
+	calculatorService := app.NewCalculatorService(operationFactory)
+	calculatorServiceDecorator := app.NewCalculatorServiceDecorator(calculatorService, historyStore)
 	historyService := app.NewHistoryService(historyStore)
 
 	api.GetPingHandler = handlers.GetPingHandler()
-	api.PostCalculatorHandler = handlers.PostCalculateHandler(calculatorService)
+	api.PostCalculatorHandler = handlers.PostCalculateHandler(calculatorServiceDecorator)
 	api.GetHistoryEntriesHandler = handlers.GetHistoryEntriesHandler(historyService)
 	api.GetHistoryEntryHandler = handlers.GetHistoryEntryHandler(historyService)
 

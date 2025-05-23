@@ -12,9 +12,9 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 )
 
-func PostCalculateHandler(service *app.CalculatorService) operations.PostCalculatorHandlerFunc {
+func PostCalculateHandler(calculatorService app.Calculator) operations.PostCalculatorHandlerFunc {
 	return func(params operations.PostCalculatorParams) middleware.Responder {
-		result, err := service.PerformCalculation(
+		result, err := calculatorService.PerformCalculation(
 			params.HTTPRequest.Context(),
 			values.OperationType(params.Body.OperationType),
 			params.Body.Operands,

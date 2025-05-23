@@ -45,7 +45,7 @@ func GetHistoryEntriesHandler(historyService *app.HistoryService) operations.Get
 				Operands:      entry.Operands,
 				OperationID:   entry.OperationID.String(),
 				OperationType: entry.OperationType.String(),
-				Precision:     entry.Precision,
+				Precision:     int32(entry.Precision),
 				Result:        entry.Result,
 				Timestamp:     entry.Timestamp.Format(time.RFC3339),
 			})
@@ -72,7 +72,7 @@ func GetHistoryEntryHandler(historyService *app.HistoryService) operations.GetHi
 				Operands:      entry.Operands,
 				OperationID:   entry.OperationID.String(),
 				OperationType: entry.OperationType.String(),
-				Precision:     entry.Precision,
+				Precision:     int32(entry.Precision),
 				Result:        entry.Result,
 				Timestamp:     entry.Timestamp.Format(time.RFC3339),
 			},

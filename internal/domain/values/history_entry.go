@@ -7,6 +7,6 @@ type HistoryEntry struct {
 	OperationType OperationType
 	Operands      []float64
 	Result        float64
-	Precision     int32
+	Precision     int
 	Timestamp     time.Time
 }

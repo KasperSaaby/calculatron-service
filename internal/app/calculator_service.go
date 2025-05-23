@@ -8,22 +8,19 @@ import (
 
 	"github.com/KasperSaaby/calculatron-service/internal/domain/operations"
 	"github.com/KasperSaaby/calculatron-service/internal/domain/values"
-	"github.com/KasperSaaby/calculatron-service/internal/store"
 )
 
 type CalculatorService struct {
 	operationFactory operations.OperationFactory
-	historyStore     store.HistoryStore
 }
 
-func NewCalculatorService(operationFactory operations.OperationFactory, historyStore store.HistoryStore) *CalculatorService {
+func NewCalculatorService(operationFactory operations.OperationFactory) *CalculatorService {
 	return &CalculatorService{
 		operationFactory: operationFactory,
-		historyStore:     historyStore,
 	}
 }
 
-func (s *CalculatorService) PerformCalculation(ctx context.Context, operationType values.OperationType, operands []float64, precision int) (values.CalculationResult, error) {
+func (s *CalculatorService) PerformCalculation(_ context.Context, operationType values.OperationType, operands []float64, precision int) (values.CalculationResult, error) {
 	if len(operands) == 0 {
 		return values.CalculationResult{}, newAppError("no operands provided")
 	}
@@ -47,23 +44,10 @@ func (s *CalculatorService) PerformCalculation(ctx context.Context, operationTyp
 		return values.CalculationResult{}, fmt.Errorf("round result: %w", err)
 	}
 
-	operationID := values.NewOperationID()
-	err = s.historyStore.SaveCalculation(ctx, values.HistoryEntry{
-		OperationID:   operationID,
-		OperationType: operationType,
-		Operands:      operands,
-		Result:        roundedResult,
-		Precision:     int32(precision),
-		Timestamp:     time.Now(),
-	})
-	if err != nil {
-		return values.CalculationResult{}, fmt.Errorf("save to calculation history: %w", err)
-	}
-
 	return values.CalculationResult{
 		Result:      roundedResult,
 		Precision:   precision,
-		OperationID: operationID,
+		OperationID: values.NewOperationID(),
 		Timestamp:   time.Now(),
 	}, nil
 }
