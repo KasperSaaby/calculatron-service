@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/KasperSaaby/calculatron-service/internal/domain/values"
-	"github.com/KasperSaaby/calculatron-service/internal/store/repository"
+	"github.com/KasperSaaby/calculatron-service/internal/store/database/repository"
 )
 
 type DatabaseHistoryStore struct {

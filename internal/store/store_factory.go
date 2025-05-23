@@ -6,8 +6,8 @@ import (
 	"fmt"
 
 	"github.com/KasperSaaby/calculatron-service/internal/domain/values"
+	"github.com/KasperSaaby/calculatron-service/internal/store/database/repository"
 	"github.com/KasperSaaby/calculatron-service/internal/store/in_memory"
-	"github.com/KasperSaaby/calculatron-service/internal/store/repository"
 )
 
 type Factory interface {
