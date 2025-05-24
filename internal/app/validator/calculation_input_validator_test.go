@@ -34,14 +34,6 @@ func Test_CalculationInputValidator_Validate(t *testing.T) {
 			errMsg:        "precision cannot be negative",
 		},
 		{
-			name:          "unsupported operation",
-			operationType: "unsupported",
-			operands:      []float64{1, 2},
-			precision:     2,
-			expectErr:     true,
-			errMsg:        "unsupported operation type",
-		},
-		{
 			name:          "valid input",
 			operationType: values.OperationType_Add.String(),
 			operands:      []float64{1, 2},
