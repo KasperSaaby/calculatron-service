@@ -10,7 +10,10 @@ import (
 	"github.com/KasperSaaby/calculatron-service/generated/restapi"
 	"github.com/KasperSaaby/calculatron-service/generated/restapi/operations"
 	v1 "github.com/KasperSaaby/calculatron-service/internal/api/v1"
+	"github.com/KasperSaaby/calculatron-service/internal/app"
+	"github.com/KasperSaaby/calculatron-service/internal/domain"
 	"github.com/KasperSaaby/calculatron-service/internal/platform/logger"
+	"github.com/KasperSaaby/calculatron-service/internal/store"
 	"github.com/KasperSaaby/calculatron-service/internal/store/database"
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/loads"
@@ -29,8 +32,11 @@ func Opts() fx.Option {
 		),
 		fx.Invoke(
 			database.MigrateSchemas,
-			v1.Setup,
 		),
+		v1.Setup,
+		app.Setup,
+		store.Setup,
+		domain.Setup,
 	)
 }
 
