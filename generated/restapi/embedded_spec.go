@@ -29,7 +29,7 @@ func init() {
         "consumes": [
           "application/json"
         ],
-        "summary": "Calculator",
+        "summary": "Perform mathematical calculation",
         "operationId": "postCalculator",
         "parameters": [
           {
@@ -59,7 +59,7 @@ func init() {
     },
     "/v1/history": {
       "get": {
-        "summary": "Get history list",
+        "summary": "List calculation history",
         "operationId": "getHistoryEntries",
         "parameters": [
           {
@@ -92,7 +92,7 @@ func init() {
     },
     "/v1/history/{operationId}": {
       "get": {
-        "summary": "Get history",
+        "summary": "Get specific calculation result",
         "operationId": "getHistoryEntry",
         "parameters": [
           {
@@ -120,7 +120,7 @@ func init() {
     },
     "/v1/ping": {
       "get": {
-        "summary": "Get the service",
+        "summary": "Health check endpoint",
         "operationId": "getPing",
         "responses": {
           "200": {
@@ -194,6 +194,11 @@ func init() {
     },
     "PostCalculateRequest": {
       "type": "object",
+      "required": [
+        "operationType",
+        "operands",
+        "precision"
+      ],
       "properties": {
         "operands": {
           "type": "array",
@@ -263,7 +268,7 @@ func init() {
         "consumes": [
           "application/json"
         ],
-        "summary": "Calculator",
+        "summary": "Perform mathematical calculation",
         "operationId": "postCalculator",
         "parameters": [
           {
@@ -299,7 +304,7 @@ func init() {
     },
     "/v1/history": {
       "get": {
-        "summary": "Get history list",
+        "summary": "List calculation history",
         "operationId": "getHistoryEntries",
         "parameters": [
           {
@@ -335,7 +340,7 @@ func init() {
     },
     "/v1/history/{operationId}": {
       "get": {
-        "summary": "Get history",
+        "summary": "Get specific calculation result",
         "operationId": "getHistoryEntry",
         "parameters": [
           {
@@ -369,7 +374,7 @@ func init() {
     },
     "/v1/ping": {
       "get": {
-        "summary": "Get the service",
+        "summary": "Health check endpoint",
         "operationId": "getPing",
         "responses": {
           "200": {
@@ -443,6 +448,11 @@ func init() {
     },
     "PostCalculateRequest": {
       "type": "object",
+      "required": [
+        "operationType",
+        "operands",
+        "precision"
+      ],
       "properties": {
         "operands": {
           "type": "array",

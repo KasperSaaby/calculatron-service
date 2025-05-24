@@ -32,7 +32,7 @@ func NewPostCalculator(ctx *middleware.Context, handler PostCalculatorHandler) *
 /*
 	PostCalculator swagger:route POST /v1/calculate postCalculator
 
-Calculator
+Perform mathematical calculation
 */
 type PostCalculator struct {
 	Context *middleware.Context

@@ -98,6 +98,10 @@ responses:
 definitions:
   PostCalculateRequest:
     type: object
+    required:
+      - operationType
+      - operands
+      - precision
     properties:
       operationType:
         type: string

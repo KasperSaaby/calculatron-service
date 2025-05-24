@@ -32,7 +32,7 @@ func NewGetHistoryEntries(ctx *middleware.Context, handler GetHistoryEntriesHand
 /*
 	GetHistoryEntries swagger:route GET /v1/history getHistoryEntries
 
-Get history list
+List calculation history
 */
 type GetHistoryEntries struct {
 	Context *middleware.Context

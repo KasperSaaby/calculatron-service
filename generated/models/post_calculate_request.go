@@ -8,8 +8,10 @@ package models
 import (
 	"context"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // PostCalculateRequest post calculate request
@@ -18,17 +20,64 @@ import (
 type PostCalculateRequest struct {
 
 	// operands
+	// Required: true
 	Operands []float64 `json:"operands"`
 
 	// operation type
-	OperationType string `json:"operationType,omitempty"`
+	// Required: true
+	OperationType *string `json:"operationType"`
 
 	// precision
-	Precision int32 `json:"precision,omitempty"`
+	// Required: true
+	Precision *int32 `json:"precision"`
 }
 
 // Validate validates this post calculate request
 func (m *PostCalculateRequest) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateOperands(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateOperationType(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validatePrecision(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PostCalculateRequest) validateOperands(formats strfmt.Registry) error {
+
+	if err := validate.Required("operands", "body", m.Operands); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *PostCalculateRequest) validateOperationType(formats strfmt.Registry) error {
+
+	if err := validate.Required("operationType", "body", m.OperationType); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *PostCalculateRequest) validatePrecision(formats strfmt.Registry) error {
+
+	if err := validate.Required("precision", "body", m.Precision); err != nil {
+		return err
+	}
+
 	return nil
 }
 

@@ -16,9 +16,9 @@ import (
 func PostCalculateHandler(calculatorService app.Calculator) operations.PostCalculatorHandlerFunc {
 	return func(params operations.PostCalculatorParams) middleware.Responder {
 		input := appmodels.NewCalculationInput(
-			params.Body.OperationType,
+			*params.Body.OperationType,
 			params.Body.Operands,
-			int(params.Body.Precision),
+			int(*params.Body.Precision),
 		)
 
 		result, err := calculatorService.PerformCalculation(params.HTTPRequest.Context(), input)
