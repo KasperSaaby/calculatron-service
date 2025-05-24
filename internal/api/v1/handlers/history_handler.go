@@ -7,7 +7,6 @@ import (
 	"github.com/KasperSaaby/calculatron-service/generated/models"
 	"github.com/KasperSaaby/calculatron-service/generated/restapi/operations"
 	"github.com/KasperSaaby/calculatron-service/internal/app"
-	"github.com/KasperSaaby/calculatron-service/internal/domain/values"
 	"github.com/KasperSaaby/calculatron-service/internal/platform/logger"
 	"github.com/go-openapi/runtime/middleware"
 )
@@ -59,7 +58,7 @@ func GetHistoryEntryHandler(historyService *app.HistoryService) operations.GetHi
 	return func(params operations.GetHistoryEntryParams) middleware.Responder {
 		entry, err := historyService.GetHistoryByID(params.HTTPRequest.Context(), params.OperationID)
 		if err != nil {
-			if errors.Is(err, values.ErrHistoryEntryNotFound) {
+			if errors.Is(err, app.ErrNotFound) {
 				return operations.NewGetHistoryEntryNotFound()
 			}
 

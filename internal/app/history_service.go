@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/KasperSaaby/calculatron-service/internal/domain/values"
@@ -30,6 +31,10 @@ func (s *HistoryService) GetHistory(ctx context.Context, offset, limit int) ([]v
 func (s *HistoryService) GetHistoryByID(ctx context.Context, operationID string) (values.HistoryEntry, error) {
 	historyEntry, err := s.historyStore.GetCalculationByID(ctx, values.OperationID(operationID))
 	if err != nil {
+		if errors.Is(err, values.ErrHistoryEntryNotFound) {
+			return values.HistoryEntry{}, ErrNotFound
+		}
+
 		return values.HistoryEntry{}, fmt.Errorf("get history entry: %w", err)
 	}
 
