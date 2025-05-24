@@ -7,7 +7,7 @@ info:
 paths:
   /v1/ping:
     get:
-      summary: Get the service
+      summary: Health check endpoint
       operationId: getPing
       responses:
         200:
@@ -17,7 +17,7 @@ paths:
 
   /v1/calculate:
     post:
-      summary: Calculator
+      summary: Perform mathematical calculation
       operationId: postCalculator
       consumes:
         - application/json
@@ -39,7 +39,7 @@ paths:
 
   /v1/history:
     get:
-      summary: Get history list
+      summary: List calculation history
       operationId: getHistoryEntries
       parameters:
         - in: query
@@ -62,7 +62,7 @@ paths:
 
   /v1/history/{operationId}:
     get:
-      summary: Get history
+      summary: Get specific calculation result
       operationId: getHistoryEntry
       parameters:
         - in: path
