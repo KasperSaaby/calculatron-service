@@ -59,7 +59,12 @@ func GetHistoryEntryHandler(historyService *app.HistoryService) operations.GetHi
 		entry, err := historyService.GetHistoryByID(params.HTTPRequest.Context(), params.OperationID)
 		if err != nil {
 			if errors.Is(err, app.ErrNotFound) {
-				return operations.NewGetHistoryEntryNotFound()
+				resp := &models.ErrorModel{
+					Message:    "No history entry found",
+					ReasonCode: "not_found",
+				}
+
+				return operations.NewGetHistoryEntryNotFound().WithPayload(resp)
 			}
 
 			logger.Errf(err, "Get history entry")

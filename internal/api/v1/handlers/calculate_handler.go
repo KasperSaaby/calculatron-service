@@ -26,18 +26,25 @@ func PostCalculateHandler(calculatorService app.Calculator) operations.PostCalcu
 			var validationError *validator.ValidationError
 			if errors.As(err, &validationError) {
 				logger.Infof("Validation error: %v", validationError)
-				return operations.NewPostCalculatorBadRequest()
+				resp := &models.ErrorModel{
+					Message:    err.Error(),
+					ReasonCode: "validation_error",
+				}
+
+				return operations.NewPostCalculatorBadRequest().WithPayload(resp)
 			}
 
 			logger.Errf(err, "Perform calculation")
 			return operations.NewPostCalculatorInternalServerError()
 		}
 
-		return operations.NewPostCalculatorOK().WithPayload(&models.PostCalculateResponse{
+		resp := &models.PostCalculateResponse{
 			OperationID: result.OperationID.String(),
 			Precision:   int32(result.Precision),
 			Result:      result.Result,
 			Timestamp:   result.Timestamp.Format(time.RFC3339),
-		})
+		}
+
+		return operations.NewPostCalculatorOK().WithPayload(resp)
 	}
 }
