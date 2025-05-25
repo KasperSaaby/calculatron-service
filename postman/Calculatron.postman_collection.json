@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"operationType\": \"power\",\n    \"operands\": [\n        5.5,\n        7.9\n    ],\n    \"precision\": 1,\n    \"async\": false,\n    \"metadata\": {\n        \"requestId\": \"0a7a3fd9-f174-4140-ade0-5e6b498ae7f5\",\n        \"source\": \"web\"\n    }\n}",
+							"raw": "{\n    \"operationType\": \"multiply\",\n    \"operands\": [\n        5.5,\n        7.9\n    ],\n    \"precision\": 1\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -40,7 +40,17 @@
 					"name": "ping",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "{{path}}/{{version}}/ping",
+							"host": [
+								"{{path}}"
+							],
+							"path": [
+								"{{version}}",
+								"ping"
+							]
+						}
 					},
 					"response": []
 				},
@@ -48,7 +58,27 @@
 					"name": "history",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "{{path}}/{{version}}/history?offset=1&limit=2",
+							"host": [
+								"{{path}}"
+							],
+							"path": [
+								"{{version}}",
+								"history"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "2"
+								}
+							]
+						}
 					},
 					"response": []
 				},
@@ -58,14 +88,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{path}}/{{version}}/history/0da2cdca-b888-42a5-88d0-5551f92a428c",
+							"raw": "{{path}}/{{version}}/history/30fb3bec-762e-471a-b909-4e54ec75a4ab",
 							"host": [
 								"{{path}}"
 							],
 							"path": [
 								"{{version}}",
 								"history",
-								"0da2cdca-b888-42a5-88d0-5551f92a428c"
+								"30fb3bec-762e-471a-b909-4e54ec75a4ab"
 							]
 						}
 					},
