@@ -30,9 +30,6 @@ func Opts() fx.Option {
 			NewDatabase,
 			NewSwaggerAPI,
 		),
-		fx.Invoke(
-			database.MigrateSchemas,
-		),
 		v1.Setup,
 		app.Setup,
 		store.Setup,
@@ -47,7 +44,10 @@ func NewDatabase(lc fx.Lifecycle) (*sql.DB, error) {
 	}
 
 	lc.Append(fx.Hook{
-		OnStop: func(ctx context.Context) error {
+		OnStart: func(context.Context) error {
+			return database.MigrateSchemas(db)
+		},
+		OnStop: func(context.Context) error {
 			return db.Close()
 		},
 	})
@@ -79,7 +79,7 @@ func NewSwaggerAPI(lc fx.Lifecycle) (*operations.CalculatronServiceAPI, error) {
 	server.Port = port
 
 	lc.Append(fx.Hook{
-		OnStart: func(ctx context.Context) error {
+		OnStart: func(context.Context) error {
 			go func() {
 				err := server.Serve()
 				if err != nil {
@@ -89,7 +89,7 @@ func NewSwaggerAPI(lc fx.Lifecycle) (*operations.CalculatronServiceAPI, error) {
 
 			return nil
 		},
-		OnStop: func(ctx context.Context) error {
+		OnStop: func(context.Context) error {
 			return server.Shutdown()
 		},
 	})
