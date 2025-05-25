@@ -73,6 +73,8 @@ func NewSwaggerAPI(lc fx.Lifecycle) (*operations.CalculatronServiceAPI, error) {
 
 	api := operations.NewCalculatronServiceAPI(spec)
 	api.ServeError = errors.ServeError
+	api.UseSwaggerUI()
+
 	server := restapi.NewServer(api)
 	server.Port = port
 

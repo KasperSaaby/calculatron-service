@@ -25,3 +25,6 @@ The coding language is also up to you, but GO lang would be preferred, since it 
 
 Service running on GCP using Cloud Run:
 - https://calculatron-239545498088.europe-west1.run.app
+
+For API documentation see:
+- https://calculatron-239545498088.europe-west1.run.app/docs
