@@ -13,7 +13,6 @@ COPY . .
 # Build your Go application
 # CGO_ENABLED=0 is important for creating static binaries, which are ideal for containers
 # GOOS=linux ensures it compiles for Linux
-#RUN CGO_ENABLED=0 GOOS=linux go build -o /calculatron-service ./cmd
 RUN CGO_ENABLED=0 GOOS=linux go build -o /app/main ./cmd
 
 # Final stage: a minimal base image
