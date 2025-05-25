@@ -1,25 +1,23 @@
 package logger
 
 import (
+	"context"
 	"fmt"
-	"log"
+	"log/slog"
 	"os"
 )
 
-var (
-	stdoutLogger = log.New(os.Stdout, "log: ", log.LstdFlags)
-	stderrLogger = log.New(os.Stderr, "log: ", log.LstdFlags)
-)
+var jsonLogger = slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
-func Infof(format string, args ...interface{}) {
-	stdoutLogger.Printf(format, args...)
+func Infof(ctx context.Context, format string, args ...interface{}) {
+	jsonLogger.InfoContext(ctx, format, args...)
 }
 
-func Errorf(format string, args ...interface{}) {
-	stderrLogger.Printf(format, args...)
+func Errorf(ctx context.Context, format string, args ...interface{}) {
+	jsonLogger.ErrorContext(ctx, format, args...)
 }
 
-func Errf(err error, format string, args ...interface{}) {
+func Errf(ctx context.Context, err error, format string, args ...interface{}) {
 	msg := fmt.Sprintf(format, args...)
 
 	errMsg := "nil"
@@ -27,5 +25,5 @@ func Errf(err error, format string, args ...interface{}) {
 		errMsg = err.Error()
 	}
 
-	stderrLogger.Printf("%s: %s", msg, errMsg)
+	jsonLogger.ErrorContext(ctx, fmt.Sprintf("%s: %s", msg, errMsg))
 }

@@ -9,7 +9,7 @@ import (
 
 	"github.com/KasperSaaby/calculatron-service/generated/restapi"
 	"github.com/KasperSaaby/calculatron-service/generated/restapi/operations"
-	v1 "github.com/KasperSaaby/calculatron-service/internal/api/v1"
+	apiv1 "github.com/KasperSaaby/calculatron-service/internal/api/v1"
 	"github.com/KasperSaaby/calculatron-service/internal/app"
 	"github.com/KasperSaaby/calculatron-service/internal/domain"
 	"github.com/KasperSaaby/calculatron-service/internal/platform/logger"
@@ -30,7 +30,7 @@ func Opts() fx.Option {
 			NewDatabase,
 			NewSwaggerAPI,
 		),
-		v1.Setup,
+		apiv1.Setup,
 		app.Setup,
 		store.Setup,
 		domain.Setup,
@@ -74,16 +74,19 @@ func NewSwaggerAPI(lc fx.Lifecycle) (*operations.CalculatronServiceAPI, error) {
 	api := operations.NewCalculatronServiceAPI(spec)
 	api.ServeError = errors.ServeError
 	api.UseSwaggerUI()
+	api.Logger = func(format string, args ...interface{}) {
+		logger.Infof(context.Background(), format, args...)
+	}
 
 	server := restapi.NewServer(api)
 	server.Port = port
 
 	lc.Append(fx.Hook{
-		OnStart: func(context.Context) error {
+		OnStart: func(ctx context.Context) error {
 			go func() {
 				err := server.Serve()
 				if err != nil {
-					logger.Errf(err, "Serving HTTP server")
+					logger.Errf(ctx, err, "Serving HTTP server")
 				}
 			}()
 

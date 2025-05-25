@@ -32,9 +32,10 @@ func GetHistoryEntriesHandler(historyService *app.HistoryService) operations.Get
 			limit = QueryParam_MaxLimit
 		}
 
-		historyEntries, err := historyService.GetHistory(params.HTTPRequest.Context(), offset, limit)
+		ctx := params.HTTPRequest.Context()
+		historyEntries, err := historyService.GetHistory(ctx, offset, limit)
 		if err != nil {
-			logger.Errf(err, "Get history entries")
+			logger.Errf(ctx, err, "Get history entries")
 			return operations.NewGetHistoryEntriesInternalServerError()
 		}
 
@@ -56,7 +57,8 @@ func GetHistoryEntriesHandler(historyService *app.HistoryService) operations.Get
 
 func GetHistoryEntryHandler(historyService *app.HistoryService) operations.GetHistoryEntryHandlerFunc {
 	return func(params operations.GetHistoryEntryParams) middleware.Responder {
-		entry, err := historyService.GetHistoryByID(params.HTTPRequest.Context(), params.OperationID)
+		ctx := params.HTTPRequest.Context()
+		entry, err := historyService.GetHistoryByID(ctx, params.OperationID)
 		if err != nil {
 			if errors.Is(err, app.ErrNotFound) {
 				resp := &models.ErrorModel{
@@ -67,7 +69,7 @@ func GetHistoryEntryHandler(historyService *app.HistoryService) operations.GetHi
 				return operations.NewGetHistoryEntryNotFound().WithPayload(resp)
 			}
 
-			logger.Errf(err, "Get history entry")
+			logger.Errf(ctx, err, "Get history entry")
 			return operations.NewGetHistoryEntryInternalServerError()
 		}
 
